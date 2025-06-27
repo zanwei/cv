@@ -2,6 +2,7 @@
 
 /* Tailwind 颜色变量定义 */
 :root {
+    --color-brand: #B66EFF;
     --color-black: #000000;
     --color-white: #ffffff;
     --color-gray-50: #f9fafb;
@@ -232,13 +233,13 @@ button:hover {
 
 /* 选择文本样式 */
 ::selection {
-    background-color: var(--color-gray-200);
-    color: var(--color-white);
+    background-color: var(--color-brand);
+    color: var(--color-black);
 }
 
 ::-moz-selection {
-    background-color: var(--color-gray-200);
-    color: var(--color-white);
+    background-color: var(--color-brand);
+    color: var(--color-black);
 }
 
 /* 滚动条样式 */
