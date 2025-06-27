@@ -105,10 +105,12 @@ class Resume {
     }
 
     addInitialAnimations() {
-        // 为页面刷新后的初始动画全部同时进行
+        // 为页面刷新后的初始动画，所有元素同时进行
         const animatedElements = [
+            // 头部区域
             document.querySelector('.avatar-container'),
             document.querySelector('.bio-text'),
+            // 各个section
             ...Array.from(document.querySelectorAll('.section-work, .section-education, .section-project, .section-contact'))
         ].filter(Boolean);
 
@@ -117,24 +119,16 @@ class Resume {
                 // 初始隐藏
                 element.style.opacity = '0';
                 element.style.transform = 'translateY(-3px)';
-                // 立即添加动画类
-                element.classList.add('animate-fade-in');
+                
+                // 所有元素同时开始动画，无延迟
+                setTimeout(() => {
+                    element.classList.add('animate-fade-in');
+                }, 0); // 无延迟，同时进行
             }
         });
     }
 
     addHoverImageEffect() {
-        // 预加载悬浮图片，避免首次悬浮卡顿
-        const preloadImages = [
-            'images/affine.png',
-            'images/ming.png',
-            'images/kwai.png'
-        ];
-        preloadImages.forEach(src => {
-            const img = new window.Image();
-            img.src = src;
-        });
-
         // 获取悬浮图片容器和图片元素
         const hoverContainer = document.getElementById('hover-image');
         const hoverImg = document.getElementById('hover-img');

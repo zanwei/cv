@@ -16,11 +16,6 @@
     --color-slate-400: #94a3b8;
 }
 
-/* 自定义字体大小样式 */
-.mono.text-xs {
-    font-size: 0.875rem; /* 14px */
-}
-
 /* 基础重置和字体设置 */
 * {
     box-sizing: border-box;
@@ -75,12 +70,12 @@ html, body, * {
 
 /* 头像样式 */
 .avatar-container {
-    transition: opacity 0.5s cubic-bezier(0.58, 0, 0.3, 1), transform 0.5s cubic-bezier(0.58, 0, 0.3, 1);
+    transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
 }
 
 /* 个人简介样式 */
 .bio-text {
-    transition: opacity 0.5s cubic-bezier(0.58, 0, 0.3, 1), transform 0.5s cubic-bezier(0.58, 0, 0.3, 1);
+    transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
 }
 
 /* 链接样式 */
@@ -92,28 +87,14 @@ a, a:link, a:visited {
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
-a:hover, a:focus {
+a:hover {
     text-decoration-color: var(--color-gray-900) !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
-/* 特殊链接样式 - 工作经历中的公司名（保持原有样式）*/
-.hover-trigger {
-    text-decoration: none !important;
-}
-
-.hover-trigger .company-name {
-    text-decoration: underline !important;
-    text-decoration-color: var(--color-gray-300) !important;
-    text-underline-offset: 3px !important;
-    transition: text-decoration-color 0.2s ease;
-}
-
-.hover-trigger:hover .company-name {
+a:focus {
     text-decoration-color: var(--color-gray-900) !important;
-}
-
-.hover-trigger:focus .company-name {
-    text-decoration-color: var(--color-gray-900) !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
 /* 响应式增强 */
@@ -289,7 +270,7 @@ button:hover {
 .section-education,
 .section-project,
 .section-contact {
-    transition: opacity 0.5s cubic-bezier(0.58, 0, 0.3, 1), transform 0.5s cubic-bezier(0.58, 0, 0.3, 1);
+    transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
 }
 
 /* 悬浮图片样式 */
@@ -326,3 +307,8 @@ button:hover {
     color: var(--color-gray-700) !important;
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
+
+/* Mono text-xs 字体大小 */
+.mono.text-xs {
+    font-size: 0.875rem !important; /* 14px */
+} 
