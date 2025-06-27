@@ -19,7 +19,7 @@
 /* 基础重置和字体设置 */
 * {
     box-sizing: border-box;
-    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
 body {
@@ -29,12 +29,12 @@ body {
     background-color: var(--color-white);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
 /* 全局鼠标样式 */
 html, body, * {
-    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
 /* 动画效果 */
@@ -84,17 +84,17 @@ a, a:link, a:visited {
     text-decoration-color: var(--color-gray-300) !important;
     text-underline-offset: 3px !important;
     transition: text-decoration-color 0.2s ease;
-    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
 a:hover {
     text-decoration-color: var(--color-gray-900) !important;
-    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
 a:focus {
     text-decoration-color: var(--color-gray-900) !important;
-    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
 /* 响应式增强 */
@@ -210,7 +210,7 @@ a:focus {
 
     .hover-trigger:hover {
         color: var(--color-gray-300) !important;
-        cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+        cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
     }
 }
 
@@ -222,12 +222,12 @@ button:focus {
     outline: 2px solid var(--color-gray-200);
     outline-offset: 2px;
     border-radius: 2px;
-    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
 /* 按钮悬停样式 */
 button:hover {
-    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
 /* 选择文本样式 */
@@ -299,11 +299,11 @@ button:hover {
 
 /* 悬浮触发器样式 */
 .hover-trigger {
-    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
     transition: color 0.2s ease;
 }
 
 .hover-trigger:hover {
     color: var(--color-gray-700) !important;
-    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 } 
