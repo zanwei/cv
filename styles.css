@@ -85,8 +85,15 @@ html, body, * {
 
 /* 链接样式 */
 a, a:link, a:visited {
-    text-decoration: none !important;
+    text-decoration: underline !important;
+    text-decoration-color: var(--color-gray-300) !important;
+    text-underline-offset: 3px !important;
+    transition: text-decoration-color 0.2s ease;
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
+}
+
+a:hover, a:focus {
+    text-decoration-color: var(--color-gray-900) !important;
 }
 
 .company-name {
@@ -197,10 +204,6 @@ a, a:link, a:visited {
     
     .text-gray-600 {
         color: var(--color-gray-300) !important;
-    }
-    
-    .bg-gray-200 {
-        background-color: var(--color-gray-700) !important;
     }
     
     /* 深色模式下的链接样式 */
