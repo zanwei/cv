@@ -16,6 +16,11 @@
     --color-slate-400: #94a3b8;
 }
 
+/* 自定义字体大小样式 */
+.mono.text-xs {
+    font-size: 0.875rem; /* 14px */
+}
+
 /* 基础重置和字体设置 */
 * {
     box-sizing: border-box;
