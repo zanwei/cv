@@ -94,6 +94,15 @@ a:hover {
         width: 100%;
     }
     
+    /* 移动端 gap 重置 */
+    .gap-6 {
+        gap: 0;
+    }
+    
+    .gap-8 {
+        gap: 0;
+    }
+    
     /* 移动端 section 间距 */
     .section-work,
     .section-education,
