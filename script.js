@@ -124,6 +124,17 @@ class Resume {
     }
 
     addHoverImageEffect() {
+        // 预加载悬浮图片，避免首次悬浮卡顿
+        const preloadImages = [
+            'images/affine.png',
+            'images/ming.png',
+            'images/kwai.png'
+        ];
+        preloadImages.forEach(src => {
+            const img = new window.Image();
+            img.src = src;
+        });
+
         // 获取悬浮图片容器和图片元素
         const hoverContainer = document.getElementById('hover-image');
         const hoverImg = document.getElementById('hover-img');
