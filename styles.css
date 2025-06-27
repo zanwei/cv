@@ -19,6 +19,7 @@
 /* 基础重置和字体设置 */
 * {
     box-sizing: border-box;
+    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
 }
 
 body {
@@ -28,6 +29,12 @@ body {
     background-color: var(--color-white);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+}
+
+/* 全局鼠标样式 */
+html, body, * {
+    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
 }
 
 /* 动画效果 */
@@ -72,15 +79,22 @@ body {
 }
 
 /* 链接样式 */
-a {
-    text-decoration: underline;
-    text-decoration-color: var(--color-gray-200);
-    text-underline-offset: 2px;
+a, a:link, a:visited {
+    text-decoration: underline !important;
+    text-decoration-color: var(--color-gray-300) !important;
+    text-underline-offset: 3px !important;
     transition: text-decoration-color 0.2s ease;
+    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
 }
 
 a:hover {
-    text-decoration-color: var(--color-black);
+    text-decoration-color: var(--color-gray-900) !important;
+    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+}
+
+a:focus {
+    text-decoration-color: var(--color-gray-900) !important;
+    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
 }
 
 /* 响应式增强 */
@@ -113,7 +127,9 @@ a:hover {
     
     a {
         color: var(--color-black);
-        text-decoration: none;
+        text-decoration: underline;
+        text-decoration-color: var(--color-gray-300);
+        text-underline-offset: 3px;
     }
     
     a[href]:after {
@@ -137,6 +153,7 @@ a:hover {
     a {
         text-decoration: underline;
         text-decoration-color: var(--color-black) !important;
+        text-underline-offset: 3px !important;
     }
     
     a:hover {
@@ -180,14 +197,24 @@ a:hover {
     }
     
     /* 深色模式下的链接样式 */
-    a {
-        text-decoration-color: var(--color-gray-600);
+    a, a:link, a:visited {
+        text-decoration-color: var(--color-gray-600) !important;
+        text-underline-offset: 3px !important;
     }
     
-    a:hover {
-        text-decoration-color: var(--color-gray-50);
+    a:hover, a:focus {
+        text-decoration-color: var(--color-gray-50) !important;
+    }
+
+
+
+    .hover-trigger:hover {
+        color: var(--color-gray-300) !important;
+        cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
     }
 }
+
+
 
 /* 焦点样式 */
 a:focus,
@@ -195,6 +222,12 @@ button:focus {
     outline: 2px solid var(--color-gray-200);
     outline-offset: 2px;
     border-radius: 2px;
+    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
+}
+
+/* 按钮悬停样式 */
+button:hover {
+    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
 }
 
 /* 选择文本样式 */
@@ -238,4 +271,39 @@ button:focus {
 .section-project,
 .section-contact {
     transition: opacity 0.5s cubic-bezier(0.58, 0, 0.3, 1), transform 0.5s cubic-bezier(0.58, 0, 0.3, 1);
+}
+
+/* 悬浮图片样式 */
+.hover-image-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 64px;
+    height: 64px;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0;
+    transition: opacity 0.1s ease-out;
+    will-change: opacity, transform;
+}
+
+.hover-image-container.show {
+    opacity: 1;
+}
+
+.hover-image-container img {
+    width: 64px;
+    height: 64px;
+    object-fit: cover;
+}
+
+/* 悬浮触发器样式 */
+.hover-trigger {
+    cursor: url('svgs/cursor-32.svg') 16 16, auto !important;
+    transition: color 0.2s ease;
+}
+
+.hover-trigger:hover {
+    color: var(--color-gray-700) !important;
+    cursor: url('svgs/cursor-hover-32.svg') 16 16, auto !important;
 } 

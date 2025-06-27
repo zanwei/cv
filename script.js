@@ -20,6 +20,7 @@ class Resume {
         this.addLinkTracking();
         this.addResponsiveEnhancements();
         this.addAnimations();
+        this.addHoverImageEffect();
     }
 
     addSmoothScrolling() {
@@ -126,6 +127,78 @@ class Resume {
             }
         });
     }
+
+    addHoverImageEffect() {
+        // 获取悬浮图片容器和图片元素
+        const hoverContainer = document.getElementById('hover-image');
+        const hoverImg = document.getElementById('hover-img');
+        
+        if (!hoverContainer || !hoverImg) return;
+
+        // 图片映射
+        const imageMap = {
+            'affine': 'images/affine.png',
+            'ming': 'images/ming.png',
+            'kwai': 'images/kwai.png'
+        };
+
+        // 获取所有触发器元素
+        const triggers = document.querySelectorAll('.hover-trigger');
+        
+        triggers.forEach(trigger => {
+            // 鼠标进入事件
+            trigger.addEventListener('mouseenter', (e) => {
+                const imageType = trigger.getAttribute('data-image');
+                const imageSrc = imageMap[imageType];
+                
+                if (imageSrc) {
+                    hoverImg.src = imageSrc;
+                    hoverImg.alt = `${imageType} logo`;
+                    hoverContainer.classList.add('show');
+                }
+            });
+
+            // 鼠标移动事件
+            trigger.addEventListener('mousemove', (e) => {
+                // 获取鼠标位置，添加4px偏移
+                const x = e.clientX + 4;
+                const y = e.clientY + 4;
+                
+                // 确保图片不会超出视窗边界 (30px光球尺寸)
+                const maxX = window.innerWidth - 30 - 4;
+                const maxY = window.innerHeight - 30 - 4;
+                
+                const finalX = Math.min(x, maxX);
+                const finalY = Math.min(y, maxY);
+                
+                hoverContainer.style.left = `${finalX}px`;
+                hoverContainer.style.top = `${finalY}px`;
+            });
+
+            // 鼠标离开事件
+            trigger.addEventListener('mouseleave', () => {
+                hoverContainer.classList.remove('show');
+            });
+
+            // 添加额外的鼠标离开检测，确保图片能及时消失
+            trigger.addEventListener('mouseout', (e) => {
+                // 检查鼠标是否真的离开了元素
+                if (!trigger.contains(e.relatedTarget)) {
+                    hoverContainer.classList.remove('show');
+                }
+            });
+        });
+
+        // 页面滚动时隐藏悬浮图片
+        window.addEventListener('scroll', () => {
+            hoverContainer.classList.remove('show');
+        });
+
+        // 点击页面其他地方时隐藏图片
+        document.addEventListener('click', () => {
+            hoverContainer.classList.remove('show');
+        });
+    }
 }
 
 // 工具函数：防抖
@@ -138,4 +211,4 @@ function debounce(func, wait) {
 }
 
 // 初始化应用
-new Resume(); 
+const resume = new Resume(); 
