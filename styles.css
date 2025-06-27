@@ -93,6 +93,11 @@ a:hover {
     .mobile-full-width {
         width: 100%;
     }
+    
+    /* 移动端主容器间距 1rem */
+    .min-h-screen .flex.flex-col.items-center {
+        gap: 1rem !important;
+    }
 }
 
 /* 打印样式 */
