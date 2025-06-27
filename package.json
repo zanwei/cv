@@ -1,0 +1,51 @@
+{
+  "name": "zanwei-guo-resume",
+  "version": "1.0.0",
+  "description": "响应式个人简历网页 - 基于 Figma 设计稿开发",
+  "main": "index.html",
+  "scripts": {
+    "dev": "python -m http.server 8000",
+    "serve": "npx serve . -p 8000",
+    "build": "npx tsc",
+    "build:watch": "npx tsc --watch",
+    "lint": "npx eslint script.ts",
+    "format": "npx prettier --write *.html *.css *.ts",
+    "preview": "open http://localhost:8000"
+  },
+  "keywords": [
+    "resume",
+    "cv",
+    "portfolio",
+    "responsive",
+    "typescript",
+    "tailwindcss",
+    "figma"
+  ],
+  "author": {
+    "name": "Zanwei Guo",
+    "email": "zanwei.guo@outlook.com",
+    "url": "https://dribbble.com/zanwei"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "typescript": "^5.0.0",
+    "prettier": "^3.0.0",
+    "eslint": "^8.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zanweiguo/resume"
+  },
+  "bugs": {
+    "url": "https://github.com/zanweiguo/resume/issues"
+  },
+  "homepage": "https://zanweiguo.github.io/resume"
+} 
