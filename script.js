@@ -105,25 +105,20 @@ class Resume {
     }
 
     addInitialAnimations() {
-        // 为页面刷新后的初始动画添加延迟
+        // 为页面刷新后的初始动画全部同时进行
         const animatedElements = [
-            // 头部区域
             document.querySelector('.avatar-container'),
             document.querySelector('.bio-text'),
-            // 各个section
             ...Array.from(document.querySelectorAll('.section-work, .section-education, .section-project, .section-contact'))
         ].filter(Boolean);
 
-        animatedElements.forEach((element, index) => {
+        animatedElements.forEach((element) => {
             if (element) {
                 // 初始隐藏
                 element.style.opacity = '0';
                 element.style.transform = 'translateY(-3px)';
-                
-                // 添加延迟动画
-                setTimeout(() => {
-                    element.classList.add('animate-fade-in');
-                }, 300); // 统一300ms延迟
+                // 立即添加动画类
+                element.classList.add('animate-fade-in');
             }
         });
     }
