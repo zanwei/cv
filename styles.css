@@ -93,6 +93,19 @@ a:hover {
     .mobile-full-width {
         width: 100%;
     }
+    
+    /* 移动端 section 间距 */
+    .section-work,
+    .section-education,
+    .section-project,
+    .section-contact {
+        margin-bottom: 2rem; /* 32px */
+    }
+    
+    /* 最后一个 section 不需要下边距 */
+    .section-contact {
+        margin-bottom: 0;
+    }
 }
 
 /* 打印样式 */
