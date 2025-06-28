@@ -1,6 +1,7 @@
 // 简历页面交互脚本
 class Resume {
     constructor() {
+        this.preloadLogos();
         this.init();
     }
 
@@ -197,6 +198,18 @@ class Resume {
         // 点击页面其他地方时隐藏图片
         document.addEventListener('click', () => {
             hoverContainer.classList.remove('show');
+        });
+    }
+
+    preloadLogos() {
+        const logos = [
+            'images/affine.png',
+            'images/kwai.png',
+            'images/ming.png'
+        ];
+        logos.forEach(src => {
+            const img = new window.Image();
+            img.src = src;
         });
     }
 }
