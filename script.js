@@ -130,18 +130,14 @@ class Resume {
     }
 
     addHoverImageEffect() {
-        // 获取悬浮图片容器和图片元素
+        // 获取悬浮图片容器和所有logo图片元素
         const hoverContainer = document.getElementById('hover-image');
-        const hoverImg = document.getElementById('hover-img');
-        
-        if (!hoverContainer || !hoverImg) return;
-
-        // 图片映射
-        const imageMap = {
-            'affine': 'images/affine.png',
-            'ming': 'images/ming.png',
-            'kwai': 'images/kwai.png'
+        const logoMap = {
+            affine: document.getElementById('hover-affine'),
+            ming: document.getElementById('hover-ming'),
+            kwai: document.getElementById('hover-kwai')
         };
+        if (!hoverContainer || !logoMap.affine || !logoMap.ming || !logoMap.kwai) return;
 
         // 获取所有触发器元素
         const triggers = document.querySelectorAll('.hover-trigger');
@@ -150,11 +146,10 @@ class Resume {
             // 鼠标进入事件
             trigger.addEventListener('mouseenter', (e) => {
                 const imageType = trigger.getAttribute('data-image');
-                const imageSrc = imageMap[imageType];
-                
-                if (imageSrc) {
-                    hoverImg.src = imageSrc;
-                    hoverImg.alt = `${imageType} logo`;
+                // 隐藏所有logo
+                Object.values(logoMap).forEach(img => img.classList.remove('active'));
+                if (logoMap[imageType]) {
+                    logoMap[imageType].classList.add('active');
                     hoverContainer.classList.add('show');
                 }
             });
@@ -164,14 +159,11 @@ class Resume {
                 // 获取鼠标位置，添加4px偏移
                 const x = e.clientX + 4;
                 const y = e.clientY + 4;
-                
-                // 确保图片不会超出视窗边界 (30px光球尺寸)
-                const maxX = window.innerWidth - 30 - 4;
-                const maxY = window.innerHeight - 30 - 4;
-                
+                // 确保图片不会超出视窗边界 (64px logo尺寸)
+                const maxX = window.innerWidth - 64 - 4;
+                const maxY = window.innerHeight - 64 - 4;
                 const finalX = Math.min(x, maxX);
                 const finalY = Math.min(y, maxY);
-                
                 hoverContainer.style.left = `${finalX}px`;
                 hoverContainer.style.top = `${finalY}px`;
             });
@@ -179,13 +171,14 @@ class Resume {
             // 鼠标离开事件
             trigger.addEventListener('mouseleave', () => {
                 hoverContainer.classList.remove('show');
+                Object.values(logoMap).forEach(img => img.classList.remove('active'));
             });
 
             // 添加额外的鼠标离开检测，确保图片能及时消失
             trigger.addEventListener('mouseout', (e) => {
-                // 检查鼠标是否真的离开了元素
                 if (!trigger.contains(e.relatedTarget)) {
                     hoverContainer.classList.remove('show');
+                    Object.values(logoMap).forEach(img => img.classList.remove('active'));
                 }
             });
         });
@@ -193,11 +186,13 @@ class Resume {
         // 页面滚动时隐藏悬浮图片
         window.addEventListener('scroll', () => {
             hoverContainer.classList.remove('show');
+            Object.values(logoMap).forEach(img => img.classList.remove('active'));
         });
 
         // 点击页面其他地方时隐藏图片
         document.addEventListener('click', () => {
             hoverContainer.classList.remove('show');
+            Object.values(logoMap).forEach(img => img.classList.remove('active'));
         });
     }
 

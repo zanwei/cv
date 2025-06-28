@@ -312,4 +312,22 @@ button:hover {
 /* Mono text-xs 字体大小 */
 .mono.text-xs {
     font-size: 0.875rem !important; /* 14px */
+}
+
+/* 悬浮logo淡入动画 */
+.hover-logo {
+    opacity: 0;
+    transition: opacity 0.18s cubic-bezier(0.58, 0, 0.3, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 64px;
+    height: 64px;
+    pointer-events: none;
+    z-index: 1;
+    display: none;
+}
+.hover-logo.active {
+    display: block;
+    opacity: 1;
 } 
