@@ -1,151 +1,140 @@
-// 简历页面交互脚本
-interface ResumeApp {
-    init(): void;
-    addSmoothScrolling(): void;
-    addLinkTracking(): void;
-    addResponsiveEnhancements(): void;
-}
+// Resume page interaction script
+(() => {
+    const debounce = (fn: Function, wait: number) => {
+        let timer: NodeJS.Timeout;
+        return (...args: any[]) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(null, args), wait);
+        };
+    };
 
-class Resume implements ResumeApp {
-    constructor() {
-        this.init();
-    }
-
-    init(): void {
-        // 等待 DOM 加载完成
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                this.setupEventListeners();
-            });
-        } else {
-            this.setupEventListeners();
-        }
-    }
-
-    private setupEventListeners(): void {
-        this.addSmoothScrolling();
-        this.addLinkTracking();
-        this.addResponsiveEnhancements();
-        this.addAnimations();
-    }
-
-    addSmoothScrolling(): void {
-        // 为所有锚点链接添加平滑滚动
-        const links = document.querySelectorAll('a[href^="#"]');
-        links.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                const target = document.querySelector((link as HTMLAnchorElement).getAttribute('href') || '');
+    const enableSmoothScroll = () => {
+        document.querySelectorAll('a[href^="#"]').forEach(link => {
+            link.addEventListener('click', e => {
+                const href = link.getAttribute('href');
+                if (!href || href === '#') return;
+                const target = document.querySelector(href);
                 if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 }
             });
         });
-    }
+    };
 
-    addLinkTracking(): void {
-        // 为外部链接添加点击追踪
-        const externalLinks = document.querySelectorAll('a[target="_blank"]');
-        externalLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+    const enableExternalLinkTracking = () => {
+        document.querySelectorAll('a[target="_blank"]').forEach(link => {
+            link.addEventListener('click', () => {
                 const href = (link as HTMLAnchorElement).href;
-                console.log(`外部链接点击: ${href}`);
-                
-                // 可以在这里添加分析代码
-                // 例如: gtag('event', 'click', { event_category: 'external_link', event_label: href });
+                console.log(`External link clicked: ${href}`);
             });
         });
-    }
+    };
 
-    addResponsiveEnhancements(): void {
-        // 响应式增强功能
-        const handleResize = () => {
-            const width = window.innerWidth;
+    const enableResponsiveClasses = () => {
+        const updateClass = () => {
+            const w = window.innerWidth;
             const body = document.body;
-            
-            // 根据屏幕宽度添加不同的类
-            if (width < 640) {
-                body.classList.add('mobile');
-                body.classList.remove('tablet', 'desktop');
-            } else if (width < 1024) {
-                body.classList.add('tablet');
-                body.classList.remove('mobile', 'desktop');
-            } else {
-                body.classList.add('desktop');
-                body.classList.remove('mobile', 'tablet');
+            body.classList.toggle('mobile', w < 640);
+            body.classList.toggle('tablet', w >= 640 && w < 1024);
+            body.classList.toggle('desktop', w >= 1024);
+        };
+        updateClass();
+        window.addEventListener('resize', debounce(updateClass, 250));
+    };
+
+    const playInitialAnimations = () => {
+        const elements = [
+            document.querySelector('.avatar-container'),
+            document.querySelector('.bio-text'),
+            ...document.querySelectorAll('.section-work, .section-education, .section-project, .section-contact')
+        ].filter(Boolean);
+        elements.forEach(el => {
+            if (el) {
+                (el as HTMLElement).style.opacity = '0';
+                (el as HTMLElement).style.transform = 'translateY(-3px)';
+                setTimeout(() => {
+                    el.classList.add('animate-fade-in');
+                }, 0);
             }
-        };
+        });
+    };
 
-        // 初始化和监听窗口大小变化
-        handleResize();
-        window.addEventListener('resize', debounce(handleResize, 250));
-    }
-
-    addAnimations(): void {
-        // 为页面加载时添加动画
-        this.addInitialAnimations();
-        
-        // 添加滚动进入动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-
-        const observer = new IntersectionObserver((entries) => {
+    const enableScrollAnimations = () => {
+        const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('animate-fade-in');
-                    observer.unobserve(entry.target);
+                    obs.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
-
-        // 观察所有主要部分
-        const sections = document.querySelectorAll('[class*="section-"]');
-        sections.forEach(section => {
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('[class*="section-"]').forEach(section => {
             observer.observe(section);
         });
-    }
-
-    private addInitialAnimations(): void {
-        // 为页面刷新后的初始动画添加延迟
-        const animatedElements = [
-            // 头部区域
-            document.querySelector('.avatar-container'),
-            document.querySelector('.bio-text'),
-            // 各个section
-            ...Array.from(document.querySelectorAll('.section-work, .section-education, .section-project, .section-contact'))
-        ].filter(Boolean);
-
-        animatedElements.forEach((element, index) => {
-            if (element) {
-                // 初始隐藏
-                (element as HTMLElement).style.opacity = '0';
-                (element as HTMLElement).style.transform = 'translateY(-3px)';
-                
-                // 添加延迟动画
-                setTimeout(() => {
-                    element.classList.add('animate-fade-in');
-                }, 300); // 统一300ms延迟
-            }
-        });
-    }
-}
-
-// 工具函数：防抖
-function debounce<T extends (...args: any[]) => any>(
-    func: T,
-    wait: number
-): (...args: Parameters<T>) => void {
-    let timeout: number;
-    return (...args: Parameters<T>) => {
-        clearTimeout(timeout);
-        timeout = setTimeout(() => func.apply(null, args), wait);
     };
-}
 
-// 初始化应用
-new Resume(); 
+    const enableHoverImageEffect = () => {
+        const hoverContainer = document.getElementById('hover-image');
+        const hoverImg = document.getElementById('hover-img') as HTMLImageElement;
+        if (!hoverContainer || !hoverImg) return;
+        const imageMap: Record<string, string> = {
+            'affine': 'images/affine.png',
+            'ming': 'images/ming.png',
+            'kwai': 'images/kwai.png'
+        };
+        document.querySelectorAll('.hover-trigger').forEach(trigger => {
+            trigger.addEventListener('mouseenter', () => {
+                const type = trigger.getAttribute('data-image');
+                const src = imageMap[type || ''];
+                if (src) {
+                    hoverImg.src = src;
+                    hoverImg.alt = `${type} logo`;
+                    hoverContainer.classList.add('show');
+                }
+            });
+            trigger.addEventListener('mousemove', (e: Event) => {
+                const mouseEvent = e as MouseEvent;
+                const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - 34);
+                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - 34);
+                hoverContainer.style.left = `${x}px`;
+                hoverContainer.style.top = `${y}px`;
+            });
+            const hide = () => hoverContainer.classList.remove('show');
+            trigger.addEventListener('mouseleave', hide);
+            trigger.addEventListener('mouseout', (e: Event) => {
+                const mouseEvent = e as MouseEvent;
+                if (!trigger.contains(mouseEvent.relatedTarget as Node)) hide();
+            });
+        });
+        window.addEventListener('scroll', () => hoverContainer.classList.remove('show'));
+        document.addEventListener('click', () => hoverContainer.classList.remove('show'));
+    };
+
+    const preloadImages = (srcArr: string[]) => {
+        srcArr.forEach(src => {
+            const img = new window.Image();
+            img.src = src;
+        });
+    };
+
+    const init = () => {
+        preloadImages([
+            'images/affine.png',
+            'images/kwai.png',
+            'images/ming.png'
+        ]);
+        enableSmoothScroll();
+        enableExternalLinkTracking();
+        enableResponsiveClasses();
+        playInitialAnimations();
+        enableScrollAnimations();
+        enableHoverImageEffect();
+    };
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})(); 

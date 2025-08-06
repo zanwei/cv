@@ -1,7 +1,7 @@
 {
   "name": "zanwei-guo-resume",
   "version": "1.0.0",
-  "description": "响应式个人简历网页 - 基于 Figma 设计稿开发",
+  "description": "Responsive personal resume website - Developed based on Figma design",
   "main": "index.html",
   "scripts": {
     "dev": "python -m http.server 8000",
