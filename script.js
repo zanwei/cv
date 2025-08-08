@@ -52,9 +52,9 @@
         elements.forEach(el => {
             el.style.opacity = '0';
             el.style.transform = 'translateY(-3px)';
-            setTimeout(() => {
+            requestAnimationFrame(() => {
                 el.classList.add('animate-fade-in');
-            }, 0);
+            });
         });
     };
 
@@ -98,18 +98,20 @@
                 hoverContainer.style.top = `${y}px`;
             });
             const hide = () => hoverContainer.classList.remove('show');
-            trigger.addEventListener('mouseleave', hide);
+            trigger.addEventListener('mouseleave', hide, { passive: true });
             trigger.addEventListener('mouseout', e => {
                 if (!trigger.contains(e.relatedTarget)) hide();
             });
         });
-        window.addEventListener('scroll', () => hoverContainer.classList.remove('show'));
+        window.addEventListener('scroll', () => hoverContainer.classList.remove('show'), { passive: true });
         document.addEventListener('click', () => hoverContainer.classList.remove('show'));
     };
 
     const preloadImages = (srcArr) => {
         srcArr.forEach(src => {
             const img = new window.Image();
+            img.decoding = 'async';
+            img.loading = 'eager';
             img.src = src;
         });
     };

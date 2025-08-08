@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en_US">
+<html lang="en-US">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -70,8 +70,10 @@
                         <!-- Avatar -->
                         <div class="relative avatar-container">
                             <div class="w-[65px] h-[65px] rounded-full bg-gray-200 overflow-hidden">
-                                <img src="portrait.png" 
-                                     alt="Zanwei Guo" 
+                                <img src="portrait.png"
+                                     alt="Zanwei Guo"
+                                     width="65" height="65"
+                                     decoding="async" fetchpriority="high" loading="eager"
                                      class="w-full h-full object-cover">
                             </div>
                         </div>
@@ -256,9 +258,9 @@
 
     <!-- Hover Image Container -->
     <div id="hover-image" class="hover-image-container">
-        <img id="hover-img" src="" alt="" />
+        <img id="hover-img" src="" alt="" decoding="async" loading="lazy" />
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 </body>
 </html> 

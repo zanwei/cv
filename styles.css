@@ -1,6 +1,6 @@
-/* 自定义样式和动画 */
+/* Custom styles and animations */
 
-/* Tailwind 颜色变量定义 */
+/* Tailwind color variables */
 :root {
     --color-brand: #B66EFF;
     --color-black: #000000;
@@ -17,7 +17,7 @@
     --color-slate-400: #94a3b8;
 }
 
-/* 基础重置和字体设置 */
+/* Base reset and fonts */
 * {
     box-sizing: border-box;
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
@@ -33,12 +33,12 @@ body {
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
-/* 全局鼠标样式 */
+/* Global cursor */
 html, body, * {
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
-/* 动画效果 */
+/* Animations */
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -69,17 +69,17 @@ html, body, * {
     animation: slideIn 0.6s ease-out forwards;
 }
 
-/* 头像样式 */
+/* Avatar */
 .avatar-container {
     transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
 }
 
-/* 个人简介样式 */
+/* Bio */
 .bio-text {
     transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
 }
 
-/* 链接样式 */
+/* Links */
 a, a:link, a:visited {
     text-decoration: underline !important;
     text-decoration-color: var(--color-gray-300) !important;
@@ -98,7 +98,7 @@ a:focus {
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
-/* 响应式增强 */
+/* Responsive */
 @media (max-width: 639px) {
     .mobile-stack {
         flex-direction: column;
@@ -109,13 +109,13 @@ a:focus {
         width: 100%;
     }
     
-    /* 移动端主容器间距 1rem */
+    /* Mobile main container spacing 1rem */
     .min-h-screen .flex.flex-col.items-center {
         gap: 1rem !important;
     }
 }
 
-/* 打印样式 */
+/* Print */
 @media print {
     body {
         font-size: 12px;
@@ -138,7 +138,7 @@ a:focus {
     }
 }
 
-/* 可访问性增强 */
+/* A11y */
 @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -149,7 +149,7 @@ a:focus {
     }
 }
 
-/* 高对比度模式支持 */
+/* High contrast */
 @media (prefers-contrast: high) {
     a {
         text-decoration: underline;
@@ -170,7 +170,7 @@ a:focus {
     }
 }
 
-/* 深色模式支持 */
+/* Dark mode */
 @media (prefers-color-scheme: dark) {
     body {
         background-color: var(--color-gray-900);
@@ -197,7 +197,7 @@ a:focus {
         background-color: var(--color-gray-700) !important;
     }
     
-    /* 深色模式下的链接样式 */
+    /* Dark mode links */
     a, a:link, a:visited {
         text-decoration-color: var(--color-gray-600) !important;
         text-underline-offset: 3px !important;
@@ -217,7 +217,7 @@ a:focus {
 
 
 
-/* 焦点样式 */
+/* Focus */
 a:focus,
 button:focus {
     outline: 2px solid var(--color-gray-200);
@@ -226,12 +226,12 @@ button:focus {
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
-/* 按钮悬停样式 */
+/* Button hover */
 button:hover {
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
-/* 选择文本样式 */
+/* Selection */
 ::selection {
     background-color: var(--color-brand);
     color: var(--color-black);
@@ -242,7 +242,7 @@ button:hover {
     color: var(--color-black);
 }
 
-/* 滚动条样式 */
+/* Scrollbar */
 ::-webkit-scrollbar {
     width: 8px;
 }
@@ -260,13 +260,13 @@ button:hover {
     background: var(--color-slate-400);
 }
 
-/* 加载状态 */
+/* Loading */
 .loading {
     opacity: 0.7;
     pointer-events: none;
 }
 
-/* 渐入效果延迟 - 由JavaScript控制 */
+/* Fade-in controlled by JS */
 .section-work,
 .section-education,
 .section-project,
@@ -274,7 +274,7 @@ button:hover {
     transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
 }
 
-/* 悬浮图片样式 */
+/* Hover image */
 .hover-image-container {
     position: fixed;
     top: 0;
@@ -298,7 +298,7 @@ button:hover {
     object-fit: cover;
 }
 
-/* 悬浮触发器样式 */
+/* Hover trigger */
 .hover-trigger {
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
     transition: color 0.2s ease;
@@ -309,7 +309,7 @@ button:hover {
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
-/* Mono text-xs 字体大小 */
+/* Mono text-xs font size */
 .mono.text-xs {
     font-size: 0.875rem !important; /* 14px */
 } 
