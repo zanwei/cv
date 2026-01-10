@@ -77,20 +77,34 @@
     const enableHoverImageEffect = () => {
         const hoverContainer = document.getElementById('hover-image');
         const hoverImg = document.getElementById('hover-img') as HTMLImageElement;
-        if (!hoverContainer || !hoverImg) return;
+        const hoverVideo = document.getElementById('hover-video') as HTMLVideoElement;
+        if (!hoverContainer || !hoverImg || !hoverVideo) return;
         const imageMap: Record<string, string> = {
             'affine': 'images/affine.png',
             'ming': 'images/ming.png',
-            'kwai': 'images/kwai.png'
+            'kwai': 'images/kwai.png',
         };
         document.querySelectorAll('.hover-trigger').forEach(trigger => {
             trigger.addEventListener('mouseenter', () => {
                 const type = trigger.getAttribute('data-image');
                 const src = imageMap[type || ''];
                 if (src) {
-                    hoverImg.src = src;
-                    hoverImg.alt = `${type} logo`;
-                    hoverContainer.classList.add('show');
+                    const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
+                    if (isVideo) {
+                        hoverImg.style.display = 'none';
+                        hoverVideo.style.display = 'block';
+                        hoverVideo.src = src;
+                        hoverVideo.play();
+                        hoverContainer.classList.add('show', 'video-mode');
+                    } else {
+                        hoverVideo.style.display = 'none';
+                        hoverVideo.pause();
+                        hoverImg.style.display = 'block';
+                        hoverImg.src = src;
+                        hoverImg.alt = `${type} logo`;
+                        hoverContainer.classList.remove('video-mode');
+                        hoverContainer.classList.add('show');
+                    }
                 }
             });
             trigger.addEventListener('mousemove', (e: Event) => {
@@ -100,15 +114,52 @@
                 hoverContainer.style.left = `${x}px`;
                 hoverContainer.style.top = `${y}px`;
             });
-            const hide = () => hoverContainer.classList.remove('show');
+            const hide = () => {
+                hoverContainer.classList.remove('show', 'video-mode');
+                hoverVideo.pause();
+            };
             trigger.addEventListener('mouseleave', hide, { passive: true } as AddEventListenerOptions);
             trigger.addEventListener('mouseout', (e: Event) => {
                 const mouseEvent = e as MouseEvent;
                 if (!trigger.contains(mouseEvent.relatedTarget as Node)) hide();
             });
         });
-        window.addEventListener('scroll', () => hoverContainer.classList.remove('show'), { passive: true });
-        document.addEventListener('click', () => hoverContainer.classList.remove('show'));
+        window.addEventListener('scroll', () => {
+            hoverContainer.classList.remove('show', 'video-mode');
+            hoverVideo.pause();
+        }, { passive: true });
+        document.addEventListener('click', () => {
+            hoverContainer.classList.remove('show', 'video-mode');
+            hoverVideo.pause();
+        });
+
+        // Skiller video hover effect
+        const skillerLink = document.querySelector('.skiller-link');
+        const skillerVideo = document.querySelector('.skiller-video') as HTMLVideoElement;
+        if (skillerLink && skillerVideo) {
+            skillerLink.addEventListener('mouseenter', () => {
+                skillerVideo.classList.add('show');
+                skillerVideo.play();
+            });
+            skillerLink.addEventListener('mouseleave', () => {
+                skillerVideo.classList.remove('show');
+                skillerVideo.pause();
+            });
+        }
+
+        // FontDetector video hover effect
+        const fontdetectorLink = document.querySelector('.fontdetector-link');
+        const fontdetectorVideo = document.querySelector('.fontdetector-video') as HTMLVideoElement;
+        if (fontdetectorLink && fontdetectorVideo) {
+            fontdetectorLink.addEventListener('mouseenter', () => {
+                fontdetectorVideo.classList.add('show');
+                fontdetectorVideo.play();
+            });
+            fontdetectorLink.addEventListener('mouseleave', () => {
+                fontdetectorVideo.classList.remove('show');
+                fontdetectorVideo.pause();
+            });
+        }
     };
 
     const preloadImages = (srcArr: string[]) => {

@@ -1,3 +1,4 @@
+"use strict";
 // Resume page interaction script
 (() => {
     const debounce = (fn, wait) => {
@@ -7,12 +8,12 @@
             timer = setTimeout(() => fn.apply(null, args), wait);
         };
     };
-
     const enableSmoothScroll = () => {
         document.querySelectorAll('a[href^="#"]').forEach(link => {
             link.addEventListener('click', e => {
                 const href = link.getAttribute('href');
-                if (!href || href === '#') return;
+                if (!href || href === '#')
+                    return;
                 const target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
@@ -21,7 +22,6 @@
             });
         });
     };
-
     const enableExternalLinkTracking = () => {
         document.querySelectorAll('a[target="_blank"]').forEach(link => {
             link.addEventListener('click', () => {
@@ -30,7 +30,6 @@
             });
         });
     };
-
     const enableResponsiveClasses = () => {
         const updateClass = () => {
             const w = window.innerWidth;
@@ -42,7 +41,6 @@
         updateClass();
         window.addEventListener('resize', debounce(updateClass, 250));
     };
-
     const playInitialAnimations = () => {
         const elements = [
             document.querySelector('.avatar-container'),
@@ -50,14 +48,15 @@
             ...document.querySelectorAll('.section-work, .section-education, .section-project, .section-contact')
         ].filter(Boolean);
         elements.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(-3px)';
-            requestAnimationFrame(() => {
-                el.classList.add('animate-fade-in');
-            });
+            if (el) {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-3px)';
+                requestAnimationFrame(() => {
+                    el.classList.add('animate-fade-in');
+                });
+            }
         });
     };
-
     const enableScrollAnimations = () => {
         const observer = new IntersectionObserver((entries, obs) => {
             entries.forEach(entry => {
@@ -71,42 +70,94 @@
             observer.observe(section);
         });
     };
-
     const enableHoverImageEffect = () => {
         const hoverContainer = document.getElementById('hover-image');
         const hoverImg = document.getElementById('hover-img');
-        if (!hoverContainer || !hoverImg) return;
+        const hoverVideo = document.getElementById('hover-video');
+        if (!hoverContainer || !hoverImg || !hoverVideo)
+            return;
         const imageMap = {
             'affine': 'images/affine.png',
             'ming': 'images/ming.png',
-            'kwai': 'images/kwai.png'
+            'kwai': 'images/kwai.png',
         };
         document.querySelectorAll('.hover-trigger').forEach(trigger => {
             trigger.addEventListener('mouseenter', () => {
                 const type = trigger.getAttribute('data-image');
-                const src = imageMap[type];
+                const src = imageMap[type || ''];
                 if (src) {
-                    hoverImg.src = src;
-                    hoverImg.alt = `${type} logo`;
-                    hoverContainer.classList.add('show');
+                    const isVideo = src.endsWith('.webm') || src.endsWith('.mp4');
+                    if (isVideo) {
+                        hoverImg.style.display = 'none';
+                        hoverVideo.style.display = 'block';
+                        hoverVideo.src = src;
+                        hoverVideo.play();
+                        hoverContainer.classList.add('show', 'video-mode');
+                    }
+                    else {
+                        hoverVideo.style.display = 'none';
+                        hoverVideo.pause();
+                        hoverImg.style.display = 'block';
+                        hoverImg.src = src;
+                        hoverImg.alt = `${type} logo`;
+                        hoverContainer.classList.remove('video-mode');
+                        hoverContainer.classList.add('show');
+                    }
                 }
             });
-            trigger.addEventListener('mousemove', e => {
-                const x = Math.min(e.clientX + 4, window.innerWidth - 34);
-                const y = Math.min(e.clientY + 4, window.innerHeight - 34);
+            trigger.addEventListener('mousemove', (e) => {
+                const mouseEvent = e;
+                const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - 34);
+                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - 34);
                 hoverContainer.style.left = `${x}px`;
                 hoverContainer.style.top = `${y}px`;
             });
-            const hide = () => hoverContainer.classList.remove('show');
+            const hide = () => {
+                hoverContainer.classList.remove('show', 'video-mode');
+                hoverVideo.pause();
+            };
             trigger.addEventListener('mouseleave', hide, { passive: true });
-            trigger.addEventListener('mouseout', e => {
-                if (!trigger.contains(e.relatedTarget)) hide();
+            trigger.addEventListener('mouseout', (e) => {
+                const mouseEvent = e;
+                if (!trigger.contains(mouseEvent.relatedTarget))
+                    hide();
             });
         });
-        window.addEventListener('scroll', () => hoverContainer.classList.remove('show'), { passive: true });
-        document.addEventListener('click', () => hoverContainer.classList.remove('show'));
+        window.addEventListener('scroll', () => {
+            hoverContainer.classList.remove('show', 'video-mode');
+            hoverVideo.pause();
+        }, { passive: true });
+        document.addEventListener('click', () => {
+            hoverContainer.classList.remove('show', 'video-mode');
+            hoverVideo.pause();
+        });
+        // Skiller video hover effect
+        const skillerLink = document.querySelector('.skiller-link');
+        const skillerVideo = document.querySelector('.skiller-video');
+        if (skillerLink && skillerVideo) {
+            skillerLink.addEventListener('mouseenter', () => {
+                skillerVideo.classList.add('show');
+                skillerVideo.play();
+            });
+            skillerLink.addEventListener('mouseleave', () => {
+                skillerVideo.classList.remove('show');
+                skillerVideo.pause();
+            });
+        }
+        // FontDetector video hover effect
+        const fontdetectorLink = document.querySelector('.fontdetector-link');
+        const fontdetectorVideo = document.querySelector('.fontdetector-video');
+        if (fontdetectorLink && fontdetectorVideo) {
+            fontdetectorLink.addEventListener('mouseenter', () => {
+                fontdetectorVideo.classList.add('show');
+                fontdetectorVideo.play();
+            });
+            fontdetectorLink.addEventListener('mouseleave', () => {
+                fontdetectorVideo.classList.remove('show');
+                fontdetectorVideo.pause();
+            });
+        }
     };
-
     const preloadImages = (srcArr) => {
         srcArr.forEach(src => {
             const img = new window.Image();
@@ -115,7 +166,6 @@
             img.src = src;
         });
     };
-
     const init = () => {
         preloadImages([
             'images/affine.png',
@@ -129,10 +179,11 @@
         enableScrollAnimations();
         enableHoverImageEffect();
     };
-
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
-    } else {
+    }
+    else {
         init();
     }
-})(); 
+})();
+//# sourceMappingURL=script.js.map
