@@ -300,7 +300,7 @@ button:hover {
 
 .hover-image-container video {
     display: none;
-    width: 320px;
+    width: 400px;
     height: auto;
     object-fit: contain;
     border-radius: 8px;
@@ -308,7 +308,7 @@ button:hover {
 }
 
 .hover-image-container.video-mode {
-    width: 320px;
+    width: 400px;
     height: auto;
 }
 
