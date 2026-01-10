@@ -151,11 +151,34 @@
             img.src = src;
         });
     };
+    const preloadVideos = (srcArr) => {
+        // Preload videos after page is idle for better performance
+        const loadVideos = () => {
+            srcArr.forEach(src => {
+                const video = document.createElement('video');
+                video.preload = 'auto';
+                video.muted = true;
+                video.src = src;
+                // Start loading but don't append to DOM
+                video.load();
+            });
+        };
+        if ('requestIdleCallback' in window) {
+            window.requestIdleCallback(loadVideos, { timeout: 3000 });
+        }
+        else {
+            setTimeout(loadVideos, 1000);
+        }
+    };
     const init = () => {
         preloadImages([
             'images/affine.png',
             'images/kwai.png',
             'images/ming.png'
+        ]);
+        preloadVideos([
+            'webM/skiller.webm',
+            'webM/fontDetector.webm'
         ]);
         enableSmoothScroll();
         enableExternalLinkTracking();
