@@ -83,6 +83,8 @@
             'affine': 'images/affine.png',
             'ming': 'images/ming.png',
             'kwai': 'images/kwai.png',
+            'skiller': 'webM/skiller.webm',
+            'fontdetector': 'webM/fontDetector.webm',
         };
         document.querySelectorAll('.hover-trigger').forEach(trigger => {
             trigger.addEventListener('mouseenter', () => {
@@ -132,34 +134,6 @@
             hoverContainer.classList.remove('show', 'video-mode');
             hoverVideo.pause();
         });
-
-        // Skiller video hover effect
-        const skillerLink = document.querySelector('.skiller-link');
-        const skillerVideo = document.querySelector('.skiller-video') as HTMLVideoElement;
-        if (skillerLink && skillerVideo) {
-            skillerLink.addEventListener('mouseenter', () => {
-                skillerVideo.classList.add('show');
-                skillerVideo.play();
-            });
-            skillerLink.addEventListener('mouseleave', () => {
-                skillerVideo.classList.remove('show');
-                skillerVideo.pause();
-            });
-        }
-
-        // FontDetector video hover effect
-        const fontdetectorLink = document.querySelector('.fontdetector-link');
-        const fontdetectorVideo = document.querySelector('.fontdetector-video') as HTMLVideoElement;
-        if (fontdetectorLink && fontdetectorVideo) {
-            fontdetectorLink.addEventListener('mouseenter', () => {
-                fontdetectorVideo.classList.add('show');
-                fontdetectorVideo.play();
-            });
-            fontdetectorLink.addEventListener('mouseleave', () => {
-                fontdetectorVideo.classList.remove('show');
-                fontdetectorVideo.pause();
-            });
-        }
     };
 
     const preloadImages = (srcArr: string[]) => {

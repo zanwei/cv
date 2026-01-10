@@ -300,57 +300,16 @@ button:hover {
 
 .hover-image-container video {
     display: none;
-    width: 200px;
+    width: 320px;
     height: auto;
     object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
 }
 
 .hover-image-container.video-mode {
-    width: 200px;
+    width: 320px;
     height: auto;
-}
-
-/* Skiller fixed video */
-.skiller-video {
-    position: absolute;
-    right: -450px;
-    top: 0;
-    width: 450px;
-    height: auto;
-    border-radius: 8px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    box-shadow: 0 24px 100px 0 rgba(0, 0, 0, 0.1);
-}
-
-.skiller-video.show {
-    opacity: 1;
-}
-
-/* FontDetector fixed video */
-.fontdetector-video {
-    position: absolute;
-    right: -450px;
-    top: 24px;
-    width: 450px;
-    height: auto;
-    border-radius: 8px;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    box-shadow: 0 24px 100px 0 rgba(0, 0, 0, 0.1);
-}
-
-.fontdetector-video.show {
-    opacity: 1;
-}
-
-@media (max-width: 1024px) {
-    .skiller-video,
-    .fontdetector-video {
-        display: none;
-    }
 }
 
 /* Hover trigger */
