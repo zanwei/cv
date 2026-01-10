@@ -110,13 +110,19 @@
             trigger.addEventListener('mousemove', (e) => {
                 const mouseEvent = e;
                 const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - 34);
-                const y = Math.max(mouseEvent.clientY - 24, 0);
+                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - 34);
                 hoverContainer.style.left = `${x}px`;
                 hoverContainer.style.top = `${y}px`;
             });
             const hide = () => {
-                hoverContainer.classList.remove('show', 'video-mode');
+                hoverContainer.classList.remove('show');
                 hoverVideo.pause();
+                // Delay removing video-mode to prevent size jump during fade out
+                setTimeout(() => {
+                    if (!hoverContainer.classList.contains('show')) {
+                        hoverContainer.classList.remove('video-mode');
+                    }
+                }, 150);
             };
             trigger.addEventListener('mouseleave', hide, { passive: true });
             trigger.addEventListener('mouseout', (e) => {
@@ -125,14 +131,17 @@
                     hide();
             });
         });
-        window.addEventListener('scroll', () => {
-            hoverContainer.classList.remove('show', 'video-mode');
+        const hideGlobal = () => {
+            hoverContainer.classList.remove('show');
             hoverVideo.pause();
-        }, { passive: true });
-        document.addEventListener('click', () => {
-            hoverContainer.classList.remove('show', 'video-mode');
-            hoverVideo.pause();
-        });
+            setTimeout(() => {
+                if (!hoverContainer.classList.contains('show')) {
+                    hoverContainer.classList.remove('video-mode');
+                }
+            }, 150);
+        };
+        window.addEventListener('scroll', hideGlobal, { passive: true });
+        document.addEventListener('click', hideGlobal);
     };
     const preloadImages = (srcArr) => {
         srcArr.forEach(src => {
