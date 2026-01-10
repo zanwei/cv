@@ -110,7 +110,7 @@
             trigger.addEventListener('mousemove', (e) => {
                 const mouseEvent = e;
                 const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - 34);
-                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - 34);
+                const y = Math.max(mouseEvent.clientY - 24, 0);
                 hoverContainer.style.left = `${x}px`;
                 hoverContainer.style.top = `${y}px`;
             });
