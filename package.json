@@ -42,10 +42,10 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/zanweiguo/resume"
+    "url": "https://github.com/zanwei/cv"
   },
   "bugs": {
-    "url": "https://github.com/zanweiguo/resume/issues"
+    "url": "https://github.com/zanwei/cv/issues"
   },
-  "homepage": "https://zanweiguo.github.io/resume"
+  "homepage": "https://zanwei.github.io/cv"
 } 
