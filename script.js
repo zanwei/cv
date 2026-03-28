@@ -5,12 +5,22 @@ const CV = {
     debounceMs: { resize: 250, scrollTriggerRefresh: 200 },
     gsap: {
         scrollReveal: {
-            y: -20,
-            blurIn: '8px',
-            blurOut: '0px',
-            duration: 0.5,
-            ease: 'power2.out',
-            start: 'top 88%',
+            desktop: {
+                y: -20,
+                blurIn: '8px',
+                blurOut: '0px',
+                duration: 0.5,
+                ease: 'power2.out',
+                start: 'top 88%',
+            },
+            /** Narrow viewports: no blur (GPU), batch stagger, earlier trigger */
+            mobile: {
+                y: -10,
+                duration: 0.35,
+                stagger: 0.04,
+                ease: 'power2.out',
+                start: 'top 92%',
+            },
         },
     },
     hoverPreview: {
@@ -38,7 +48,11 @@ const CV = {
                 const target = document.querySelector(href);
                 if (target) {
                     e.preventDefault();
-                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    const smooth = window.innerWidth >= CV.breakpoints.sm;
+                    target.scrollIntoView({
+                        behavior: smooth ? 'smooth' : 'auto',
+                        block: 'start',
+                    });
                 }
             });
         });
@@ -76,43 +90,95 @@ const CV = {
         if (!gsap || !ScrollTrigger)
             return;
         gsap.registerPlugin(ScrollTrigger);
+        /** Fewer refreshes when mobile browser chrome shows/hides (address bar) */
+        ScrollTrigger.config({ ignoreMobileResize: true });
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (reduced) {
             gsap.set('.scroll-reveal', { clearProps: 'all' });
             return;
         }
+        const isInInitialViewport = (el) => {
+            const rect = el.getBoundingClientRect();
+            const vh = window.innerHeight;
+            return rect.top < vh && rect.bottom > 0;
+        };
         const setWillChange = (el, on) => {
             el.style.willChange = on ? 'transform, opacity, filter' : 'auto';
         };
-        document.querySelectorAll('.scroll-reveal').forEach(el => {
-            const rect = el.getBoundingClientRect();
-            const vh = window.innerHeight;
-            const inInitialViewport = rect.top < vh && rect.bottom > 0;
-            if (inInitialViewport) {
-                gsap.set(el, { autoAlpha: 1, y: 0, filter: 'none' });
-                gsap.set(el, { clearProps: 'filter' });
-                return;
-            }
-            const sr = CV.gsap.scrollReveal;
-            gsap.set(el, { autoAlpha: 0, y: sr.y, filter: `blur(${sr.blurIn})` });
-            gsap.to(el, {
-                autoAlpha: 1,
-                filter: `blur(${sr.blurOut})`,
-                y: 0,
-                duration: sr.duration,
-                ease: sr.ease,
-                force3D: true,
-                scrollTrigger: {
-                    trigger: el,
-                    start: sr.start,
-                    once: true,
-                },
-                onStart: () => setWillChange(el, true),
-                onComplete: () => {
-                    setWillChange(el, false);
+        const setupDesktopReveal = () => {
+            const d = CV.gsap.scrollReveal.desktop;
+            document.querySelectorAll('.scroll-reveal').forEach(el => {
+                if (isInInitialViewport(el)) {
+                    gsap.set(el, { autoAlpha: 1, y: 0, filter: 'none' });
                     gsap.set(el, { clearProps: 'filter' });
-                },
+                    return;
+                }
+                gsap.set(el, { autoAlpha: 0, y: d.y, filter: `blur(${d.blurIn})` });
+                gsap.to(el, {
+                    autoAlpha: 1,
+                    filter: `blur(${d.blurOut})`,
+                    y: 0,
+                    duration: d.duration,
+                    ease: d.ease,
+                    force3D: true,
+                    scrollTrigger: {
+                        trigger: el,
+                        start: d.start,
+                        once: true,
+                    },
+                    onStart: () => setWillChange(el, true),
+                    onComplete: () => {
+                        setWillChange(el, false);
+                        gsap.set(el, { clearProps: 'filter' });
+                    },
+                });
             });
+        };
+        const setupMobileReveal = () => {
+            const m = CV.gsap.scrollReveal.mobile;
+            const nodes = document.querySelectorAll('.scroll-reveal');
+            const toBatch = [];
+            nodes.forEach(el => {
+                if (isInInitialViewport(el)) {
+                    gsap.set(el, { autoAlpha: 1, y: 0 });
+                    return;
+                }
+                gsap.set(el, { autoAlpha: 0, y: m.y });
+                toBatch.push(el);
+            });
+            if (toBatch.length === 0)
+                return;
+            ScrollTrigger.batch(toBatch, {
+                interval: 0.06,
+                batchMax: 8,
+                onEnter: batch => {
+                    gsap.to(batch, {
+                        autoAlpha: 1,
+                        y: 0,
+                        duration: m.duration,
+                        stagger: m.stagger,
+                        ease: m.ease,
+                        force3D: true,
+                        overwrite: 'auto',
+                    });
+                },
+                start: m.start,
+                once: true,
+            });
+        };
+        const g = gsap;
+        const mm = g.matchMedia();
+        mm.add(`(min-width: ${CV.breakpoints.sm}px)`, () => {
+            setupDesktopReveal();
+            return () => {
+                ScrollTrigger.getAll().forEach(st => st.kill());
+            };
+        });
+        mm.add(`(max-width: ${CV.breakpoints.sm - 1}px)`, () => {
+            setupMobileReveal();
+            return () => {
+                ScrollTrigger.getAll().forEach(st => st.kill());
+            };
         });
         const refresh = () => ScrollTrigger.refresh();
         window.addEventListener('load', refresh, { passive: true });
