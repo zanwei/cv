@@ -4,14 +4,15 @@
   "description": "Responsive personal resume website - Developed based on Figma design",
   "main": "index.html",
   "scripts": {
-    "dev": "python -m http.server 8000",
+    "dev": "npx serve . -p 3040",
     "serve": "npx serve . -p 8000",
     "build:css": "tailwindcss -i ./tailwind.input.css -o ./tailwind.css --minify",
     "build": "npm run build:css && npx tsc",
     "build:watch": "npx tsc --watch",
     "lint": "npx eslint script.ts",
     "format": "npx prettier --write *.html *.css *.ts",
-    "preview": "open http://localhost:8000"
+    "preview": "open http://localhost:8000",
+    "dev:vercel": "vercel dev"
   },
   "keywords": [
     "resume",

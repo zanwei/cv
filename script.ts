@@ -31,6 +31,14 @@
         });
     };
 
+    const enableAvatarProtection = () => {
+        const container = document.querySelector('.avatar-container');
+        if (!container) return;
+        const block = (e: Event) => e.preventDefault();
+        container.addEventListener('contextmenu', block);
+        container.addEventListener('dragstart', block);
+    };
+
     const enableResponsiveClasses = () => {
         const updateClass = () => {
             const w = window.innerWidth;
@@ -43,35 +51,74 @@
         window.addEventListener('resize', debounce(updateClass, 250));
     };
 
-    const playInitialAnimations = () => {
-        const elements = [
-            document.querySelector('.avatar-container'),
-            document.querySelector('.bio-text'),
-            ...document.querySelectorAll('.section-work, .section-education, .section-project, .section-contact')
-        ].filter(Boolean);
-        elements.forEach(el => {
-            if (el) {
-                (el as HTMLElement).style.opacity = '0';
-                (el as HTMLElement).style.transform = 'translateY(-3px)';
-                requestAnimationFrame(() => {
-                    el.classList.add('animate-fade-in');
-                });
+    const enableScrollRevealAnimations = () => {
+        const gsap = (window as unknown as { gsap?: GsapGlobal }).gsap;
+        const ScrollTrigger = (window as unknown as { ScrollTrigger?: ScrollTriggerGlobal }).ScrollTrigger;
+        if (!gsap || !ScrollTrigger) return;
+        gsap.registerPlugin(ScrollTrigger);
+
+        const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reduced) {
+            gsap.set('.scroll-reveal', { clearProps: 'all' });
+            return;
+        }
+
+        const setWillChange = (el: HTMLElement, on: boolean) => {
+            el.style.willChange = on ? 'transform, opacity, filter' : 'auto';
+        };
+
+        document.querySelectorAll<HTMLElement>('.scroll-reveal').forEach(el => {
+            const rect = el.getBoundingClientRect();
+            const vh = window.innerHeight;
+            const inInitialViewport = rect.top < vh && rect.bottom > 0;
+
+            if (inInitialViewport) {
+                gsap.set(el, { autoAlpha: 1, y: 0, filter: 'none' });
+                gsap.set(el, { clearProps: 'filter' });
+                return;
             }
+
+            gsap.set(el, { autoAlpha: 0, y: -20, filter: 'blur(8px)' });
+            gsap.to(el, {
+                autoAlpha: 1,
+                filter: 'blur(0px)',
+                y: 0,
+                duration: 0.5,
+                ease: 'power2.out',
+                force3D: true,
+                scrollTrigger: {
+                    trigger: el,
+                    start: 'top 88%',
+                    once: true,
+                },
+                onStart: () => setWillChange(el, true),
+                onComplete: () => {
+                    setWillChange(el, false);
+                    gsap.set(el, { clearProps: 'filter' });
+                },
+            });
         });
+
+        const refresh = () => ScrollTrigger.refresh();
+        window.addEventListener('load', refresh, { passive: true });
+        requestAnimationFrame(refresh);
+        window.addEventListener(
+            'resize',
+            debounce(() => ScrollTrigger.refresh(), 200),
+            { passive: true }
+        );
     };
 
-    const enableScrollAnimations = () => {
-        const observer = new IntersectionObserver((entries, obs) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('animate-fade-in');
-                    obs.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-        document.querySelectorAll('[class*="section-"]').forEach(section => {
-            observer.observe(section);
-        });
+    type GsapGlobal = {
+        registerPlugin: (p: unknown) => void;
+        set: (t: string | Element | Element[], v: Record<string, unknown>) => void;
+        to: (t: string | Element, v: Record<string, unknown>) => gsapTween;
+    };
+
+    type gsapTween = { scrollTrigger?: unknown };
+
+    type ScrollTriggerGlobal = {
+        refresh: () => void;
     };
 
     const enableHoverImageEffect = () => {
@@ -83,9 +130,12 @@
             'affine': 'images/affine.png',
             'ming': 'images/ming.png',
             'kwai': 'images/kwai.png',
+            'design-dna': 'images/design-dna.webp',
             'skiller': 'webM/skiller.webm',
             'fontdetector': 'webM/fontDetector.webm',
         };
+
+        const largeImagePreviewTypes = new Set(['design-dna']);
         document.querySelectorAll('.hover-trigger').forEach(trigger => {
             trigger.addEventListener('mouseenter', () => {
                 const type = trigger.getAttribute('data-image');
@@ -102,19 +152,38 @@
                         hoverVideo.style.display = 'none';
                         hoverVideo.pause();
                         hoverImg.style.display = 'block';
+                        if (src.endsWith('.webp')) {
+                            hoverImg.addEventListener(
+                                'error',
+                                function tryPngFallback() {
+                                    hoverImg.src = src.replace(/\.webp$/, '.png');
+                                },
+                                { once: true }
+                            );
+                        }
                         hoverImg.src = src;
-                        hoverImg.alt = `${type} logo`;
-                        hoverContainer.classList.remove('video-mode');
+                        hoverImg.alt =
+                            type && largeImagePreviewTypes.has(type)
+                                ? 'Design-DNA Skill page preview'
+                                : `${type} logo`;
+                        if (type && largeImagePreviewTypes.has(type)) {
+                            hoverContainer.classList.add('video-mode');
+                        } else {
+                            hoverContainer.classList.remove('video-mode');
+                        }
                         hoverContainer.classList.add('show');
                     }
                 }
             });
             trigger.addEventListener('mousemove', (e: Event) => {
                 const mouseEvent = e as MouseEvent;
-                const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - 34);
-                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - 34);
-                hoverContainer.style.left = `${x}px`;
-                hoverContainer.style.top = `${y}px`;
+                const pad = 8;
+                const w = hoverContainer.offsetWidth || 64;
+                const h = hoverContainer.offsetHeight || 64;
+                const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - w - pad);
+                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - h - pad);
+                hoverContainer.style.left = `${Math.max(pad, x)}px`;
+                hoverContainer.style.top = `${Math.max(pad, y)}px`;
             });
             const hide = () => {
                 hoverContainer.classList.remove('show');
@@ -168,7 +237,8 @@
         preloadImages([
             'images/affine.png',
             'images/kwai.png',
-            'images/ming.png'
+            'images/ming.png',
+            'images/design-dna.webp'
         ]);
         preloadVideos([
             'webM/skiller.webm',
@@ -185,8 +255,8 @@
         enableSmoothScroll();
         enableExternalLinkTracking();
         enableResponsiveClasses();
-        playInitialAnimations();
-        enableScrollAnimations();
+        enableAvatarProtection();
+        enableScrollRevealAnimations();
         enableHoverImageEffect();
     };
 

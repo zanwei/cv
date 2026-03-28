@@ -17,6 +17,11 @@
     --color-slate-400: #94a3b8;
 }
 
+/* Slightly larger type scale (Tailwind rem utilities follow root) */
+html {
+    font-size: 106.25%;
+}
+
 /* Base reset and fonts */
 * {
     box-sizing: border-box;
@@ -69,14 +74,16 @@ html, body, * {
     animation: slideIn 0.6s ease-out forwards;
 }
 
-/* Avatar */
-.avatar-container {
-    transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
+/* Avatar / bio — no entrance animation; scroll sections use GSAP */
+.avatar-container,
+.bio-text {
+    transition: none;
 }
 
-/* Bio */
-.bio-text {
-    transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
+.avatar-container img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 /* Links */
@@ -266,12 +273,10 @@ button:hover {
     pointer-events: none;
 }
 
-/* Fade-in controlled by JS */
-.section-work,
-.section-education,
-.section-project,
-.section-contact {
-    transition: opacity 0.3s cubic-bezier(0.58, 0, 0.3, 1), transform 0.3s cubic-bezier(0.58, 0, 0.3, 1);
+/* Scroll reveal: GSAP animates transform + opacity + blur(8px→0) */
+.scroll-reveal {
+    transition: none;
+    backface-visibility: hidden;
 }
 
 /* Hover image */
@@ -301,6 +306,17 @@ button:hover {
 .hover-image-container video {
     display: none;
     width: 400px;
+    max-width: min(400px, calc(100vw - 24px));
+    height: auto;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+/* Large preview (screenshots) — same footprint as hover videos */
+.hover-image-container.video-mode img {
+    width: 400px;
+    max-width: min(400px, calc(100vw - 24px));
     height: auto;
     object-fit: contain;
     border-radius: 8px;
@@ -309,6 +325,7 @@ button:hover {
 
 .hover-image-container.video-mode {
     width: 400px;
+    max-width: min(400px, calc(100vw - 24px));
     height: auto;
 }
 
@@ -326,4 +343,4 @@ button:hover {
 /* Mono text-xs font size */
 .mono.text-xs {
     font-size: 0.875rem !important; /* 14px */
-} 
+}
