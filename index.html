@@ -34,6 +34,7 @@
     <meta name="author" content="zanwei.guo">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://zanwei.github.io/cv/">
+    <link rel="preload" as="image" href="portrait.webp" type="image/webp" fetchpriority="high">
     <!-- Favicon Configuration -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="shortcut icon" href="favicon.ico">
@@ -42,17 +43,12 @@
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="tailwind.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400&display=swap" rel="stylesheet">
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=IBM+Plex+Mono:wght@400&display=swap"></noscript>
     <link rel="stylesheet" href="styles.css">
-    <link rel="preload" as="image" href="images/affine.png">
-    <link rel="preload" as="image" href="images/kwai.png">
-    <link rel="preload" as="image" href="images/ming.png">
-    <!-- Prefetch videos for hover effect (loaded in background after page load) -->
-    <link rel="prefetch" as="video" href="webM/skiller.webm">
-    <link rel="prefetch" as="video" href="webM/fontDetector.webm">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -74,11 +70,14 @@
                         <!-- Avatar -->
                         <div class="relative avatar-container">
                             <div class="w-[65px] h-[65px] rounded-full bg-gray-200 overflow-hidden">
-                                <img src="portrait.png"
-                                     alt="Zanwei Guo"
-                                     width="65" height="65"
-                                     decoding="async" fetchpriority="high" loading="eager"
-                                     class="w-full h-full object-cover">
+                                <picture>
+                                    <source srcset="portrait.webp" type="image/webp">
+                                    <img src="portrait-sm.png"
+                                         alt="Zanwei Guo"
+                                         width="65" height="65"
+                                         decoding="async" fetchpriority="high" loading="eager"
+                                         class="w-full h-full object-cover">
+                                </picture>
                             </div>
                         </div>
                         <!-- Bio -->

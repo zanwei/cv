@@ -28,6 +28,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build CSS and TypeScript
+        run: |
+          npx --yes tailwindcss@3.4.17 -i ./tailwind.input.css -o ./tailwind.css --minify
+          npx --yes -p typescript@5.7.3 tsc
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
