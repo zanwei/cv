@@ -1,5 +1,26 @@
 "use strict";
-// Resume page interaction script
+// Resume page interaction script — motion/layout tokens (keep in sync with styles.css / tailwind.config.js)
+const CV = {
+    breakpoints: { sm: 640, lg: 1024 },
+    debounceMs: { resize: 250, scrollTriggerRefresh: 200 },
+    gsap: {
+        scrollReveal: {
+            y: -20,
+            blurIn: '8px',
+            blurOut: '0px',
+            duration: 0.5,
+            ease: 'power2.out',
+            start: 'top 88%',
+        },
+    },
+    hoverPreview: {
+        edgePad: 8,
+        cursorOffset: 4,
+        fallbackSize: 64,
+        hideDelayMs: 150,
+    },
+    idle: { warmupTimeoutMs: 4000, warmFallbackMs: 1200 },
+};
 (() => {
     const debounce = (fn, wait) => {
         let timer;
@@ -42,12 +63,12 @@
         const updateClass = () => {
             const w = window.innerWidth;
             const body = document.body;
-            body.classList.toggle('mobile', w < 640);
-            body.classList.toggle('tablet', w >= 640 && w < 1024);
-            body.classList.toggle('desktop', w >= 1024);
+            body.classList.toggle('mobile', w < CV.breakpoints.sm);
+            body.classList.toggle('tablet', w >= CV.breakpoints.sm && w < CV.breakpoints.lg);
+            body.classList.toggle('desktop', w >= CV.breakpoints.lg);
         };
         updateClass();
-        window.addEventListener('resize', debounce(updateClass, 250));
+        window.addEventListener('resize', debounce(updateClass, CV.debounceMs.resize));
     };
     const enableScrollRevealAnimations = () => {
         const gsap = window.gsap;
@@ -72,17 +93,18 @@
                 gsap.set(el, { clearProps: 'filter' });
                 return;
             }
-            gsap.set(el, { autoAlpha: 0, y: -20, filter: 'blur(8px)' });
+            const sr = CV.gsap.scrollReveal;
+            gsap.set(el, { autoAlpha: 0, y: sr.y, filter: `blur(${sr.blurIn})` });
             gsap.to(el, {
                 autoAlpha: 1,
-                filter: 'blur(0px)',
+                filter: `blur(${sr.blurOut})`,
                 y: 0,
-                duration: 0.5,
-                ease: 'power2.out',
+                duration: sr.duration,
+                ease: sr.ease,
                 force3D: true,
                 scrollTrigger: {
                     trigger: el,
-                    start: 'top 88%',
+                    start: sr.start,
                     once: true,
                 },
                 onStart: () => setWillChange(el, true),
@@ -95,7 +117,7 @@
         const refresh = () => ScrollTrigger.refresh();
         window.addEventListener('load', refresh, { passive: true });
         requestAnimationFrame(refresh);
-        window.addEventListener('resize', debounce(() => ScrollTrigger.refresh(), 200), { passive: true });
+        window.addEventListener('resize', debounce(() => ScrollTrigger.refresh(), CV.debounceMs.scrollTriggerRefresh), { passive: true });
     };
     const enableHoverImageEffect = () => {
         const hoverContainer = document.getElementById('hover-image');
@@ -151,11 +173,11 @@
             });
             trigger.addEventListener('mousemove', (e) => {
                 const mouseEvent = e;
-                const pad = 8;
-                const w = hoverContainer.offsetWidth || 64;
-                const h = hoverContainer.offsetHeight || 64;
-                const x = Math.min(mouseEvent.clientX + 4, window.innerWidth - w - pad);
-                const y = Math.min(mouseEvent.clientY + 4, window.innerHeight - h - pad);
+                const { edgePad: pad, cursorOffset: off, fallbackSize } = CV.hoverPreview;
+                const w = hoverContainer.offsetWidth || fallbackSize;
+                const h = hoverContainer.offsetHeight || fallbackSize;
+                const x = Math.min(mouseEvent.clientX + off, window.innerWidth - w - pad);
+                const y = Math.min(mouseEvent.clientY + off, window.innerHeight - h - pad);
                 hoverContainer.style.left = `${Math.max(pad, x)}px`;
                 hoverContainer.style.top = `${Math.max(pad, y)}px`;
             });
@@ -167,7 +189,7 @@
                     if (!hoverContainer.classList.contains('show')) {
                         hoverContainer.classList.remove('video-mode');
                     }
-                }, 150);
+                }, CV.hoverPreview.hideDelayMs);
             };
             trigger.addEventListener('mouseleave', hide, { passive: true });
             trigger.addEventListener('mouseout', (e) => {
@@ -183,7 +205,7 @@
                 if (!hoverContainer.classList.contains('show')) {
                     hoverContainer.classList.remove('video-mode');
                 }
-            }, 150);
+            }, CV.hoverPreview.hideDelayMs);
         };
         window.addEventListener('scroll', hideGlobal, { passive: true });
         document.addEventListener('click', hideGlobal);
@@ -219,10 +241,12 @@
     };
     const init = () => {
         if ('requestIdleCallback' in window) {
-            window.requestIdleCallback(warmHoverAssets, { timeout: 4000 });
+            window.requestIdleCallback(warmHoverAssets, {
+                timeout: CV.idle.warmupTimeoutMs,
+            });
         }
         else {
-            setTimeout(warmHoverAssets, 1200);
+            setTimeout(warmHoverAssets, CV.idle.warmFallbackMs);
         }
         enableSmoothScroll();
         enableExternalLinkTracking();

@@ -1,6 +1,6 @@
 /* Custom styles and animations */
 
-/* Tailwind color variables */
+/* Design tokens — align with tailwind.config.js where applicable */
 :root {
     --color-brand: #B66EFF;
     --color-black: #000000;
@@ -15,11 +15,54 @@
     --color-slate-100: #f1f5f9;
     --color-slate-300: #cbd5e1;
     --color-slate-400: #94a3b8;
+
+    --cv-root-font-scale: 1.0625;
+    --lh-body: 1.5;
+    --font-size-mono-label: 0.875rem;
+
+    --breakpoint-sm: 640px;
+
+    /* Cursor SVG hotspot (literal in cursor: url — not all engines resolve var() here) */
+    --motion-link: 0.2s;
+    --motion-avatar: 0.28s;
+    --motion-hover-preview: 0.1s;
+    --ease-avatar-hover: ease;
+
+    --focus-ring-width: 2px;
+    --focus-ring-offset: 2px;
+    --focus-radius: 2px;
+
+    --scrollbar-width: 8px;
+    --scrollbar-thumb-radius: 4px;
+
+    --preview-thumb-size: 4rem;
+    --preview-large-width: 25rem;
+    --preview-edge-gutter: 1.5rem;
+    --preview-radius: 0.5rem;
+    --shadow-preview: 0 8px 32px rgba(0, 0, 0, 0.15);
+    --z-hover-preview: 9999;
+
+    --underline-offset: 3px;
+
+    --anim-fade-duration: 0.3s;
+    --anim-fade-ease: cubic-bezier(0.58, 0, 0.3, 1);
+    --anim-slide-duration: 0.6s;
+    --anim-slide-ease: ease-out;
+    --anim-slide-x: -1.25rem;
+    --anim-fade-y: -0.1875rem;
+
+    --print-font-size: 12px;
+    --print-line-height: 1.4;
+
+    --mobile-stack-gap: 0.75rem;
+    --mobile-column-gap: 1rem;
+
+    --opacity-loading: 0.7;
 }
 
 /* Slightly larger type scale (Tailwind rem utilities follow root) */
 html {
-    font-size: 106.25%;
+    font-size: calc(100% * var(--cv-root-font-scale));
 }
 
 /* Base reset and fonts */
@@ -30,7 +73,7 @@ html {
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    line-height: 1.5;
+    line-height: var(--lh-body);
     color: var(--color-black);
     background-color: var(--color-white);
     -webkit-font-smoothing: antialiased;
@@ -47,7 +90,7 @@ html, body, * {
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(-3px);
+        transform: translateY(var(--anim-fade-y));
     }
     to {
         opacity: 1;
@@ -58,7 +101,7 @@ html, body, * {
 @keyframes slideIn {
     from {
         opacity: 0;
-        transform: translateX(-20px);
+        transform: translateX(var(--anim-slide-x));
     }
     to {
         opacity: 1;
@@ -67,11 +110,11 @@ html, body, * {
 }
 
 .animate-fade-in {
-    animation: fadeIn 0.3s cubic-bezier(0.58, 0, 0.3, 1) forwards;
+    animation: fadeIn var(--anim-fade-duration) var(--anim-fade-ease) forwards;
 }
 
 .animate-slide-in {
-    animation: slideIn 0.6s ease-out forwards;
+    animation: slideIn var(--anim-slide-duration) var(--anim-slide-ease) forwards;
 }
 
 /* Avatar / bio — no entrance animation; scroll sections use GSAP */
@@ -84,14 +127,25 @@ html, body, * {
     -webkit-user-drag: none;
     user-select: none;
     -webkit-user-select: none;
+    transition: filter var(--motion-avatar) var(--ease-avatar-hover);
+}
+
+.avatar-container:hover img {
+    filter: invert(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .avatar-container img {
+        transition: none;
+    }
 }
 
 /* Links */
 a, a:link, a:visited {
     text-decoration: underline !important;
     text-decoration-color: var(--color-gray-300) !important;
-    text-underline-offset: 3px !important;
-    transition: text-decoration-color 0.2s ease;
+    text-underline-offset: var(--underline-offset) !important;
+    transition: text-decoration-color var(--motion-link) ease;
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
 }
 
@@ -105,28 +159,27 @@ a:focus {
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
-/* Responsive */
-@media (max-width: 639px) {
+/* Responsive — below Tailwind `sm` (640px) */
+@media (max-width: calc(var(--breakpoint-sm) - 1px)) {
     .mobile-stack {
         flex-direction: column;
-        gap: 0.75rem;
+        gap: var(--mobile-stack-gap);
     }
     
     .mobile-full-width {
         width: 100%;
     }
     
-    /* Mobile main container spacing 1rem */
     .min-h-screen .flex.flex-col.items-center {
-        gap: 1rem !important;
+        gap: var(--mobile-column-gap) !important;
     }
 }
 
 /* Print */
 @media print {
     body {
-        font-size: 12px;
-        line-height: 1.4;
+        font-size: var(--print-font-size);
+        line-height: var(--print-line-height);
     }
     
     .no-print {
@@ -137,7 +190,7 @@ a:focus {
         color: var(--color-black);
         text-decoration: underline;
         text-decoration-color: var(--color-gray-300);
-        text-underline-offset: 3px;
+        text-underline-offset: var(--underline-offset);
     }
     
     a[href]:after {
@@ -161,7 +214,7 @@ a:focus {
     a {
         text-decoration: underline;
         text-decoration-color: var(--color-black) !important;
-        text-underline-offset: 3px !important;
+        text-underline-offset: var(--underline-offset) !important;
     }
     
     a:hover {
@@ -207,7 +260,7 @@ a:focus {
     /* Dark mode links */
     a, a:link, a:visited {
         text-decoration-color: var(--color-gray-600) !important;
-        text-underline-offset: 3px !important;
+        text-underline-offset: var(--underline-offset) !important;
     }
     
     a:hover, a:focus {
@@ -227,9 +280,9 @@ a:focus {
 /* Focus */
 a:focus,
 button:focus {
-    outline: 2px solid var(--color-gray-200);
-    outline-offset: 2px;
-    border-radius: 2px;
+    outline: var(--focus-ring-width) solid var(--color-gray-200);
+    outline-offset: var(--focus-ring-offset);
+    border-radius: var(--focus-radius);
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
@@ -251,7 +304,7 @@ button:hover {
 
 /* Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
+    width: var(--scrollbar-width);
 }
 
 ::-webkit-scrollbar-track {
@@ -260,7 +313,7 @@ button:hover {
 
 ::-webkit-scrollbar-thumb {
     background: var(--color-slate-300);
-    border-radius: 4px;
+    border-radius: var(--scrollbar-thumb-radius);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -269,7 +322,7 @@ button:hover {
 
 /* Loading */
 .loading {
-    opacity: 0.7;
+    opacity: var(--opacity-loading);
     pointer-events: none;
 }
 
@@ -284,12 +337,12 @@ button:hover {
     position: fixed;
     top: 0;
     left: 0;
-    width: 64px;
-    height: 64px;
+    width: var(--preview-thumb-size);
+    height: var(--preview-thumb-size);
     pointer-events: none;
-    z-index: 9999;
+    z-index: var(--z-hover-preview);
     opacity: 0;
-    transition: opacity 0.1s ease-out;
+    transition: opacity var(--motion-hover-preview) ease-out;
     will-change: opacity, transform;
 }
 
@@ -298,41 +351,41 @@ button:hover {
 }
 
 .hover-image-container img {
-    width: 64px;
-    height: 64px;
+    width: var(--preview-thumb-size);
+    height: var(--preview-thumb-size);
     object-fit: cover;
 }
 
 .hover-image-container video {
     display: none;
-    width: 400px;
-    max-width: min(400px, calc(100vw - 24px));
+    width: var(--preview-large-width);
+    max-width: min(var(--preview-large-width), calc(100vw - var(--preview-edge-gutter) * 2));
     height: auto;
     object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border-radius: var(--preview-radius);
+    box-shadow: var(--shadow-preview);
 }
 
 /* Large preview (screenshots) — same footprint as hover videos */
 .hover-image-container.video-mode img {
-    width: 400px;
-    max-width: min(400px, calc(100vw - 24px));
+    width: var(--preview-large-width);
+    max-width: min(var(--preview-large-width), calc(100vw - var(--preview-edge-gutter) * 2));
     height: auto;
     object-fit: contain;
-    border-radius: 8px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+    border-radius: var(--preview-radius);
+    box-shadow: var(--shadow-preview);
 }
 
 .hover-image-container.video-mode {
-    width: 400px;
-    max-width: min(400px, calc(100vw - 24px));
+    width: var(--preview-large-width);
+    max-width: min(var(--preview-large-width), calc(100vw - var(--preview-edge-gutter) * 2));
     height: auto;
 }
 
 /* Hover trigger */
 .hover-trigger {
     cursor: url('svgs/cursor-28.svg') 14 14, auto !important;
-    transition: color 0.2s ease;
+    transition: color var(--motion-link) ease;
 }
 
 .hover-trigger:hover {
@@ -349,5 +402,5 @@ button:hover {
 
 /* Mono text-xs font size */
 .mono.text-xs {
-    font-size: 0.875rem !important; /* 14px */
+    font-size: var(--font-size-mono-label) !important;
 }
