@@ -340,6 +340,13 @@ button:hover {
     cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
 }
 
+/* Mono — preload + blocking Google Fonts link; system-ui fallbacks; no synthetic styles */
+.mono {
+    font-family: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+    font-synthesis: none;
+    font-variant-numeric: tabular-nums;
+}
+
 /* Mono text-xs font size */
 .mono.text-xs {
     font-size: 0.875rem !important; /* 14px */
