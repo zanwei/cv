@@ -161,8 +161,21 @@ const CV = {
             ScrollTrigger.batch(toBatch, {
                 interval: 0.06,
                 batchMax: 8,
+                /** Snap animation to end on fast scroll — less stutter when flicking past reveal zone */
+                fastScrollEnd: true,
                 onEnter: batch => {
-                    gsap.to(batch, {
+                    batch.forEach(el => {
+                        el.style.willChange = 'transform, opacity';
+                    });
+                    const g = gsap;
+                    const tl = g.timeline({
+                        onComplete: () => {
+                            batch.forEach(el => {
+                                el.style.willChange = 'auto';
+                            });
+                        },
+                    });
+                    tl.to(batch, {
                         autoAlpha: 1,
                         y: 0,
                         duration: m.duration,
@@ -190,16 +203,21 @@ const CV = {
                 ScrollTrigger.getAll().forEach(st => st.kill());
             };
         });
-        /** Defer refresh until after layout/paint — ScrollTrigger still measures correctly */
+        /** One sync refresh after triggers exist; avoids double refresh (DOMContentLoaded + load) jank on mobile. */
+        ScrollTrigger.refresh();
+        /** Late layout (fonts, images): single extra refresh — one rAF only (double rAF delayed scroll sync). */
         const scheduleRefresh = () => {
             requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    ScrollTrigger.refresh();
-                });
+                ScrollTrigger.refresh();
             });
         };
-        window.addEventListener('load', scheduleRefresh, { passive: true });
-        scheduleRefresh();
+        let loadRefreshDone = false;
+        window.addEventListener('load', () => {
+            if (loadRefreshDone)
+                return;
+            loadRefreshDone = true;
+            scheduleRefresh();
+        }, { passive: true });
         window.addEventListener('resize', debounce(() => scheduleRefresh(), CV.debounceMs.scrollTriggerRefresh), { passive: true });
     };
     const enableHoverImageEffect = () => {
@@ -282,6 +300,8 @@ const CV = {
             });
         });
         const hideGlobal = () => {
+            if (!hoverContainer.classList.contains('show'))
+                return;
             hoverContainer.classList.remove('show');
             hoverVideo.pause();
             setTimeout(() => {

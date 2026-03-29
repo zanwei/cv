@@ -59,6 +59,8 @@ type ScrollTriggerGlobal = {
         once?: boolean;
         interval?: number;
         batchMax?: number;
+        /** GSAP: snap tweens to end on fast scroll (not in minimal typings) */
+        fastScrollEnd?: boolean | number;
     }) => unknown;
 };
 type GsapWithMatchMedia = GsapGlobal & {
