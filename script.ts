@@ -12,14 +12,6 @@ const CV = {
                 ease: 'power2.out' as const,
                 start: 'top 88%',
             },
-            /** Narrow viewports: no blur (GPU), batch stagger, earlier trigger */
-            mobile: {
-                y: -10,
-                duration: 0.35,
-                stagger: 0.04,
-                ease: 'power2.out' as const,
-                start: 'top 92%',
-            },
         },
     },
     hoverPreview: {
@@ -131,16 +123,17 @@ type GsapWithMatchMedia = GsapGlobal & {
         const gsap = (window as unknown as { gsap?: GsapGlobal }).gsap;
         const ScrollTrigger = (window as unknown as { ScrollTrigger?: ScrollTriggerGlobal }).ScrollTrigger;
         if (!gsap || !ScrollTrigger) return;
-        gsap.registerPlugin(ScrollTrigger);
-
-        /** Fewer refreshes when mobile browser chrome shows/hides (address bar) */
-        ScrollTrigger.config({ ignoreMobileResize: true });
 
         const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (reduced) {
             gsap.set('.scroll-reveal', { clearProps: 'all' });
             return;
         }
+
+        gsap.registerPlugin(ScrollTrigger);
+
+        /** Fewer refreshes when mobile browser chrome shows/hides (address bar) */
+        ScrollTrigger.config({ ignoreMobileResize: true });
 
         /** All geometry reads first, then gsap writes — avoids interleaved measure/layout thrash */
         const measureInitialVisibility = (elements: HTMLElement[]) => {
@@ -191,61 +184,6 @@ type GsapWithMatchMedia = GsapGlobal & {
             });
         };
 
-        const setupMobileReveal = () => {
-            const m = CV.gsap.scrollReveal.mobile;
-            const nodes = Array.from(
-                document.querySelectorAll<HTMLElement>('.scroll-reveal')
-            );
-            const measured = measureInitialVisibility(nodes);
-            const toBatch: HTMLElement[] = [];
-
-            measured.forEach(({ el, inView }) => {
-                if (inView) {
-                    gsap.set(el, { autoAlpha: 1, y: 0 });
-                    return;
-                }
-                gsap.set(el, { autoAlpha: 0, y: m.y });
-                toBatch.push(el);
-            });
-
-            if (toBatch.length === 0) return;
-
-            ScrollTrigger.batch(toBatch, {
-                interval: 0.06,
-                batchMax: 8,
-                /** Snap animation to end on fast scroll — less stutter when flicking past reveal zone */
-                fastScrollEnd: true,
-                onEnter: batch => {
-                    batch.forEach(el => {
-                        (el as HTMLElement).style.willChange = 'transform, opacity';
-                    });
-                    const g = gsap as GsapGlobal & {
-                        timeline: (opts?: { onComplete?: () => void }) => {
-                            to: (t: unknown, v: Record<string, unknown>) => void;
-                        };
-                    };
-                    const tl = g.timeline({
-                        onComplete: () => {
-                            batch.forEach(el => {
-                                (el as HTMLElement).style.willChange = 'auto';
-                            });
-                        },
-                    });
-                    tl.to(batch, {
-                        autoAlpha: 1,
-                        y: 0,
-                        duration: m.duration,
-                        stagger: m.stagger,
-                        ease: m.ease,
-                        force3D: true,
-                        overwrite: 'auto',
-                    });
-                },
-                start: m.start,
-                once: true,
-            });
-        };
-
         const g = gsap as unknown as GsapWithMatchMedia;
         const mm = g.matchMedia();
 
@@ -253,23 +191,24 @@ type GsapWithMatchMedia = GsapGlobal & {
             setupDesktopReveal();
             return () => {
                 ScrollTrigger.getAll().forEach(st => st.kill());
+                gsap.set('.scroll-reveal', { clearProps: 'all' });
             };
         });
 
-        mm.add(`(max-width: ${CV.breakpoints.sm - 1}px)`, () => {
-            setupMobileReveal();
-            return () => {
-                ScrollTrigger.getAll().forEach(st => st.kill());
-            };
-        });
+        const isDesktopViewport = () =>
+            window.matchMedia(`(min-width: ${CV.breakpoints.sm}px)`).matches;
 
-        /** One sync refresh after triggers exist; avoids double refresh (DOMContentLoaded + load) jank on mobile. */
-        ScrollTrigger.refresh();
+        /** ScrollTrigger.refresh() is expensive; skip on narrow viewports to avoid forced reflow on mobile. */
+        const refreshScrollTriggersIfDesktop = () => {
+            if (isDesktopViewport()) ScrollTrigger.refresh();
+        };
 
-        /** Late layout (fonts, images): single extra refresh — one rAF only (double rAF delayed scroll sync). */
+        refreshScrollTriggersIfDesktop();
+
+        /** Late layout (fonts, images): one rAF refresh on desktop only */
         const scheduleRefresh = () => {
             requestAnimationFrame(() => {
-                ScrollTrigger.refresh();
+                refreshScrollTriggersIfDesktop();
             });
         };
         let loadRefreshDone = false;
@@ -403,6 +342,15 @@ type GsapWithMatchMedia = GsapGlobal & {
         });
     };
 
+    const shouldPreloadHoverVideos = () => {
+        if (window.innerWidth < CV.breakpoints.sm) return false;
+        const nav = navigator as Navigator & {
+            connection?: { saveData?: boolean };
+        };
+        if (nav.connection?.saveData) return false;
+        return true;
+    };
+
     const warmHoverAssets = () => {
         preloadImages([
             'images/affine.png',
@@ -410,10 +358,9 @@ type GsapWithMatchMedia = GsapGlobal & {
             'images/ming.png',
             'images/design-dna.webp'
         ]);
-        preloadVideos([
-            'webM/skiller.webm',
-            'webM/fontDetector.webm'
-        ]);
+        if (shouldPreloadHoverVideos()) {
+            preloadVideos(['webM/skiller.webm', 'webM/fontDetector.webm']);
+        }
     };
 
     const init = () => {

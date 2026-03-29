@@ -36,6 +36,8 @@
     <link rel="canonical" href="https://zanwei.github.io/cv/">
     <link rel="preload" as="image" href="portrait.webp" type="image/webp" fetchpriority="high">
     <link rel="preload" href="fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+    <!-- LCP chain: CSS referenced mono after Inter; preload so request does not wait on stylesheet parse -->
+    <link rel="preload" href="fonts/ibm-plex-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
     <!-- Favicon Configuration -->
     <link rel="icon" type="image/x-icon" href="favicon.ico">
     <link rel="shortcut icon" href="favicon.ico">
@@ -46,6 +48,7 @@
     <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
     <!-- Single stylesheet: site.css = Tailwind + styles (shorter critical path than two CSS files) -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
     <link rel="stylesheet" href="site.css">
 </head>
 <body class="bg-white">

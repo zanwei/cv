@@ -17,14 +17,6 @@ declare const CV: {
                 readonly ease: "power2.out";
                 readonly start: "top 88%";
             };
-            /** Narrow viewports: no blur (GPU), batch stagger, earlier trigger */
-            readonly mobile: {
-                readonly y: -10;
-                readonly duration: 0.35;
-                readonly stagger: 0.04;
-                readonly ease: "power2.out";
-                readonly start: "top 92%";
-            };
         };
     };
     readonly hoverPreview: {
