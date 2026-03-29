@@ -44,10 +44,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="192x192" href="android-chrome-192x192.png">
     <link rel="icon" type="image/png" sizes="512x512" href="android-chrome-512x512.png">
-    <!-- Fonts: self-hosted Latin woff2 in styles.css (avoids render-blocking Google Fonts CSS) -->
+    <!-- Single stylesheet: site.css = Tailwind + styles (shorter critical path than two CSS files) -->
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
-    <link rel="stylesheet" href="tailwind.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="site.css">
 </head>
 <body class="bg-white">
     <div class="min-h-screen flex items-center justify-center p-cv-shell">

@@ -54,6 +54,7 @@ temp/
 # Build outputs
 build/
 out/
+.tailwind-out.css
 
 # Vercel
 .vercel

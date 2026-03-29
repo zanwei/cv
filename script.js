@@ -75,11 +75,14 @@ const CV = {
     };
     const enableResponsiveClasses = () => {
         const updateClass = () => {
-            const w = window.innerWidth;
-            const body = document.body;
-            body.classList.toggle('mobile', w < CV.breakpoints.sm);
-            body.classList.toggle('tablet', w >= CV.breakpoints.sm && w < CV.breakpoints.lg);
-            body.classList.toggle('desktop', w >= CV.breakpoints.lg);
+            /** rAF batches layout read (innerWidth) after style flush — fewer forced reflows */
+            requestAnimationFrame(() => {
+                const w = window.innerWidth;
+                const body = document.body;
+                body.classList.toggle('mobile', w < CV.breakpoints.sm);
+                body.classList.toggle('tablet', w >= CV.breakpoints.sm && w < CV.breakpoints.lg);
+                body.classList.toggle('desktop', w >= CV.breakpoints.lg);
+            });
         };
         updateClass();
         window.addEventListener('resize', debounce(updateClass, CV.debounceMs.resize));
@@ -97,18 +100,24 @@ const CV = {
             gsap.set('.scroll-reveal', { clearProps: 'all' });
             return;
         }
-        const isInInitialViewport = (el) => {
-            const rect = el.getBoundingClientRect();
+        /** All geometry reads first, then gsap writes — avoids interleaved measure/layout thrash */
+        const measureInitialVisibility = (elements) => {
             const vh = window.innerHeight;
-            return rect.top < vh && rect.bottom > 0;
+            return elements.map(el => {
+                const rect = el.getBoundingClientRect();
+                const inView = rect.top < vh && rect.bottom > 0;
+                return { el, inView };
+            });
         };
         const setWillChange = (el, on) => {
             el.style.willChange = on ? 'transform, opacity, filter' : 'auto';
         };
         const setupDesktopReveal = () => {
             const d = CV.gsap.scrollReveal.desktop;
-            document.querySelectorAll('.scroll-reveal').forEach(el => {
-                if (isInInitialViewport(el)) {
+            const nodes = Array.from(document.querySelectorAll('.scroll-reveal'));
+            const measured = measureInitialVisibility(nodes);
+            measured.forEach(({ el, inView }) => {
+                if (inView) {
                     gsap.set(el, { autoAlpha: 1, y: 0, filter: 'none' });
                     gsap.set(el, { clearProps: 'filter' });
                     return;
@@ -136,10 +145,11 @@ const CV = {
         };
         const setupMobileReveal = () => {
             const m = CV.gsap.scrollReveal.mobile;
-            const nodes = document.querySelectorAll('.scroll-reveal');
+            const nodes = Array.from(document.querySelectorAll('.scroll-reveal'));
+            const measured = measureInitialVisibility(nodes);
             const toBatch = [];
-            nodes.forEach(el => {
-                if (isInInitialViewport(el)) {
+            measured.forEach(({ el, inView }) => {
+                if (inView) {
                     gsap.set(el, { autoAlpha: 1, y: 0 });
                     return;
                 }
@@ -180,10 +190,17 @@ const CV = {
                 ScrollTrigger.getAll().forEach(st => st.kill());
             };
         });
-        const refresh = () => ScrollTrigger.refresh();
-        window.addEventListener('load', refresh, { passive: true });
-        requestAnimationFrame(refresh);
-        window.addEventListener('resize', debounce(() => ScrollTrigger.refresh(), CV.debounceMs.scrollTriggerRefresh), { passive: true });
+        /** Defer refresh until after layout/paint — ScrollTrigger still measures correctly */
+        const scheduleRefresh = () => {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    ScrollTrigger.refresh();
+                });
+            });
+        };
+        window.addEventListener('load', scheduleRefresh, { passive: true });
+        scheduleRefresh();
+        window.addEventListener('resize', debounce(() => scheduleRefresh(), CV.debounceMs.scrollTriggerRefresh), { passive: true });
     };
     const enableHoverImageEffect = () => {
         const hoverContainer = document.getElementById('hover-image');

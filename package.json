@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "npx serve . -p 3040",
     "serve": "npx serve . -p 8000",
-    "build:css": "tailwindcss -i ./tailwind.input.css -o ./tailwind.css --minify",
+    "build:css": "tailwindcss -i ./tailwind.input.css -o ./.tailwind-out.css --minify && node ./scripts/merge-css.mjs",
     "build": "npm run build:css && npx tsc",
     "build:watch": "npx tsc --watch",
     "lint": "npx eslint script.ts",
