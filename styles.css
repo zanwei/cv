@@ -256,49 +256,58 @@ a:focus {
     }
 }
 
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-    body {
-        background-color: var(--color-gray-900);
-        color: var(--color-gray-50);
-    }
-    
-    .bg-white {
-        background-color: var(--color-gray-900) !important;
-    }
-    
-    .text-black {
-        color: var(--color-gray-50) !important;
-    }
-    
-    .text-gray-500 {
-        color: var(--color-gray-400) !important;
-    }
-    
-    .text-gray-600 {
-        color: var(--color-gray-300) !important;
-    }
-    
-    .bg-gray-200 {
-        background-color: var(--color-gray-700) !important;
-    }
-    
-    /* Dark mode links */
-    a, a:link, a:visited {
-        text-decoration-color: var(--color-gray-600) !important;
-        text-underline-offset: var(--underline-offset) !important;
-    }
-    
-    a:hover, a:focus {
-        text-decoration-color: var(--color-gray-50) !important;
-    }
+/* Dark mode - class-based for manual toggle */
+html.dark body {
+    background-color: var(--color-gray-900);
+    color: var(--color-gray-50);
+}
 
+html.dark .bg-white {
+    background-color: var(--color-gray-900) !important;
+}
 
+html.dark .text-black {
+    color: var(--color-gray-50) !important;
+}
 
-    .hover-trigger:hover {
-        color: var(--color-gray-300) !important;
-        cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
-    }
+html.dark .text-gray-500 {
+    color: var(--color-gray-400) !important;
+}
+
+html.dark .text-gray-600 {
+    color: var(--color-gray-300) !important;
+}
+
+html.dark .bg-gray-200 {
+    background-color: var(--color-gray-700) !important;
+}
+
+/* Dark mode links */
+html.dark a, html.dark a:link, html.dark a:visited {
+    text-decoration-color: var(--color-gray-600) !important;
+    text-underline-offset: var(--underline-offset) !important;
+}
+
+html.dark a:hover, html.dark a:focus {
+    text-decoration-color: var(--color-gray-50) !important;
+}
+
+html.dark .hover-trigger:hover {
+    color: var(--color-gray-300) !important;
+    cursor: url('svgs/cursor-hover-28.svg') 14 14, auto !important;
+}
+
+/* Dark mode toggle button */
+html.dark .bg-gray-100 {
+    background-color: var(--color-gray-700) !important;
+}
+
+html.dark .text-gray-800 {
+    color: var(--color-gray-50) !important;
+}
+
+html.dark .hover\:bg-gray-200:hover {
+    background-color: var(--color-gray-600) !important;
 }
 
 

@@ -363,6 +363,55 @@ type GsapWithMatchMedia = GsapGlobal & {
         }
     };
 
+    const enableThemeToggle = () => {
+        const toggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('theme-icon-sun');
+        const moonIcon = document.getElementById('theme-icon-moon');
+        const html = document.documentElement;
+
+        if (!toggle || !sunIcon || !moonIcon) return;
+
+        const getStoredTheme = () => localStorage.getItem('theme');
+        const getSystemTheme = () => 
+            window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+        const updateIcons = (isDark: boolean) => {
+            // Show sun icon when in dark mode (to switch to light)
+            // Show moon icon when in light mode (to switch to dark)
+            sunIcon.classList.toggle('hidden', !isDark);
+            moonIcon.classList.toggle('hidden', isDark);
+        };
+
+        const setTheme = (theme: 'dark' | 'light') => {
+            if (theme === 'dark') {
+                html.classList.add('dark');
+            } else {
+                html.classList.remove('dark');
+            }
+            updateIcons(theme === 'dark');
+        };
+
+        // Initialize theme
+        const storedTheme = getStoredTheme();
+        const initialTheme = storedTheme || getSystemTheme();
+        setTheme(initialTheme as 'dark' | 'light');
+
+        // Toggle handler
+        toggle.addEventListener('click', () => {
+            const isDark = html.classList.contains('dark');
+            const newTheme = isDark ? 'light' : 'dark';
+            setTheme(newTheme);
+            localStorage.setItem('theme', newTheme);
+        });
+
+        // Listen for system theme changes (only if no stored preference)
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            if (!getStoredTheme()) {
+                setTheme(e.matches ? 'dark' : 'light');
+            }
+        });
+    };
+
     const init = () => {
         if ('requestIdleCallback' in window) {
             (window as any).requestIdleCallback(warmHoverAssets, {
@@ -371,6 +420,7 @@ type GsapWithMatchMedia = GsapGlobal & {
         } else {
             setTimeout(warmHoverAssets, CV.idle.warmFallbackMs);
         }
+        enableThemeToggle();
         enableSmoothScroll();
         enableExternalLinkTracking();
         enableResponsiveClasses();
